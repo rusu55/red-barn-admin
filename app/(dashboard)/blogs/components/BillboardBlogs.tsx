@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, {useState} from 'react';
 import { useParams, useRouter } from "next/navigation";
 import  Heading  from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
@@ -12,12 +12,15 @@ import { columns } from "./columns";
 
 import useBlogModal from '@/hooks/use-blog-modal';
 
+
 export const BillboardBlogs = ({data}: any) => {
   const params = useParams();
   const router = useRouter();
   const blogModal = useBlogModal();
+
+  const [isOpen, setIsOpen] = useState(false);
 return (
-  <>
+  <>      
       <div className="flex items-center justify-between">
             <Heading title="test" description="Manage Data" />
             <Button onClick={blogModal.onOpen}>

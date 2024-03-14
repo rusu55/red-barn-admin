@@ -4,7 +4,8 @@ import "./globals.css";
 
 import { ToasterProvider } from "@/providers/ToastProvider";
 import { EdgeStoreProvider } from "@/providers/EdgeStoreProvider";
-import { BlogModalProvider } from '@/providers/BlogModalProvider';
+import ClientOnly from '@/components/ClientOnly';
+
 import { BlogModal } from "@/components/modals/BlogModal";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,12 +22,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={inter.className}>     
       <EdgeStoreProvider>
-        <BlogModalProvider />
+        <BlogModal />
         <ToasterProvider />
         {children}
-      </EdgeStoreProvider>
+      </EdgeStoreProvider>      
       </body>
     </html>
   );
