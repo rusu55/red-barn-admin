@@ -26,8 +26,7 @@ export default function Home() {
   });
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    setIsLoading(true);
-
+    setIsLoading(true);    
     signIn("credentials", {
       ...data,
       redirect: false,

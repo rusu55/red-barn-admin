@@ -1,5 +1,5 @@
 'use client';
-import BlogModal from '@/components/modals/BlogModal';
+import {BlogModal} from '@/components/modals/BlogModal';
 import  {useState, useEffect} from 'react';
 
 export const BlogModalProvider = () => {

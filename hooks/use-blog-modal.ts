@@ -1,9 +1,15 @@
 import { create } from 'zustand';
 
+interface Props{
+  isOpen: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+}
+
 const useBlogModal = create((set) => ({
-  isOpen: true,
-  onOpen: () => set((state) => ({ isOpen: true })),
-  onClose: () => set((state) =>({ isOpen: false }))
+  isOpen: false,
+  onOpen: () => set({ isOpen: true }),
+  onClose: () => set({ isOpen: false })
 }));
 
 export default useBlogModal;

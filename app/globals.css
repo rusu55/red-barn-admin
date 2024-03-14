@@ -34,6 +34,18 @@
  
     --radius: 0.5rem;
   }
+
+  .griditemUI {
+    background-color: #fff;
+    border: 2px solid #fff;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    width: 100%;
+    cursor: -webkit-grab;
+  }
+  
+  .container {
+    background-color: #fff;
+  }
  
   .dark {
     --background: 222.2 84% 4.9%;

@@ -1,9 +1,28 @@
 'use client';
+
+import { useMemo, useState } from 'react';
+
+import { useRouter } from 'next/navigation';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useForm, SubmitHandler, FieldValues } from 'react-hook-form';
+import {
+    DndContext,
+    closestCenter,
+    MouseSensor,
+    TouchSensor,
+    DragOverlay,
+    useSensor,
+    useSensors,
+  } from "@dnd-kit/core";
+  
+  import {
+    arrayMove,
+    SortableContext,
+    rectSortingStrategy,
+  } from "@dnd-kit/sortable";
 
+  import { restrictToWindowEdges, restrictToVerticalAxis, restrictToParentElement, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { Form, FormField, FormItem, FormLabel, FormControl,  FormMessage } from '../ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -12,8 +31,13 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from '../ui/checkbox';
 import { Textarea } from "@/components/ui/textarea"
+import {
+    MultiFileDropzone,
+    type FileState,
+  } from "@/components/FilesUpload/MultiFile";
 
 import Modal from "@/components/ui/modal";
+import { useEdgeStore } from "@/providers/EdgeStoreProvider";
 
 import { cn } from "@/lib/utils"
 import { toast } from 'react-hot-toast';
@@ -27,41 +51,113 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+import { Grid } from "@/components/sortable/Grid";
+import { SortablePhoto } from "@/components/sortable/SortablePhoto";
+import { Photo } from "@/components/sortable/Photo";
+
+// SETUP FOR BLOG
 const photographyType = [{id: 'Engagement' , label: 'Engagement Photography'},
                 {id: 'Wedding' , label: 'Wedding Photography'}    
               ]
 
+enum STEPS {
+    INFO = 0,
+    UPLOAD = 1,
+    ORGANIZE = 2,
+}    
+
 const formSchema = z.object({
   title: z.string().nonempty('Field is required'),
+  postDate: z.date(), 
   description: z.string().optional(),
-  photographyType: z.array(z.string()).refine((value) => value.some((item) => item), {
+  postType: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: "You have to select at least one item.",
   }),
 })
 
-const BlogModal = () => {
-  const blogModal = useBlogModal();
+
+export const BlogModal = () => {
+  let bodyContent;
+  
+  const blogModal: any = useBlogModal(); 
+  const router = useRouter();
+  const { edgestore } = useEdgeStore();
+  
 
   const [loading, isLoading] = useState(false);
+  const [step, setStep] = useState(STEPS.INFO);
+  const [fileStates, setFileStates] = useState<FileState[]>([]);
+  const [images, setImages] = useState([]);
+  //const [items, setItems] = useState(photos);
+  const [activeId, setActiveId] = useState(null);
 
-  const form = useForm({
-    resolver: zodResolver(formSchema)
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+  
+
+   const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+        title: "",
+        postDate:"",
+        postType: "",
+        description: "",
+    },
   })
 
-  const onSubmit = async (data: any) =>{
-      console.log(data)
+// ---------------------- STEPS BUTTONS ----------------
+  const onBack = () => {
+    setStep((value) => value - 1);
   }
 
-  return (
-    <Modal 
-      title="Add Blog"
-      isOpen={blogModal.isOpen} 
-      onClose={blogModal.onClose}
-      >
+  const onNext = () => {
+    setStep((value) => value + 1);
+  }
+
+  const actionLabel = useMemo(() => {
+    if (step === STEPS.ORGANIZE) {
+      return 'Save Blog'
+    }
+
+    return 'Next'
+  }, [step]);
+ 
+// ---------------- SUBMIT BLOG FORM ------------------
+
+  const onSubmit: SubmitHandler<FieldValues> = async (data) =>{
+    if (step !== STEPS.ORGANIZE) {
+        return onNext();
+      }
+      isLoading(true);
+      console.log(data)
+      console.log(images)
+      router.refresh();
+      form.reset();
+      setStep(STEPS.INFO)
+      blogModal.onClose()
+  }
+
+  // -------------------- FUNCTION FOR UPLOAD --------------- //
+  function updateFileProgress(key: string, progress: FileState["progress"]) {
+    setFileStates((fileStates) => {
+      const newFileStates = structuredClone(fileStates);
+      const fileState = newFileStates.find(
+        (fileState) => fileState.key === key
+      );
+      if (fileState) {
+        fileState.progress = progress;
+      }
+      return newFileStates;
+    });
+  }
+
+  // ---------------------------- STEP INFO -------------------------
+
+  if(step === STEPS.INFO){
+    bodyContent = (
         <div>
                 <div className='space-y-4 py-2 pb-4'>
                   <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>                       
+                                           
                             <FormField control={form.control} name="title" render={({field}) =>(
                                     <FormItem>
                                         <FormLabel>Blog Title</FormLabel>
@@ -73,7 +169,7 @@ const BlogModal = () => {
                                 )} />                         
                                                
                         
-                        <FormField control={form.control} name="weddingDate" render={({field}) =>(
+                        <FormField control={form.control} name="postDate" render={({field}) =>(
                             <FormItem className="flex flex-col mt-3">
                                 <FormLabel>Posting Date: </FormLabel>
                                     <Popover>
@@ -111,16 +207,16 @@ const BlogModal = () => {
                                 <FormMessage />
                             </FormItem>
                         )} />
-                        <FormField control={form.control} name="services" render={() =>(
+                        <FormField control={form.control} name="postType" render={() =>(
                             <FormItem className="mt-3">
                                 <div className="mb-4">
-                                    <FormLabel className="text-base">Services</FormLabel>                                    
+                                    <FormLabel className="text-base">Photography Type</FormLabel>                                    
                                 </div>
                                 {photographyType.map((service) => (
                                     <FormField
                                         key={service.id}
                                         control={form.control}
-                                        name='services'
+                                        name='postType'
                                         render={({ field }) => {
                                             return(
                                                 <FormItem
@@ -135,7 +231,7 @@ const BlogModal = () => {
                                                             ? field.onChange([...field.value, service.id])
                                                             : field.onChange(
                                                                 field.value?.filter(
-                                                                (value) => value !== service.id
+                                                                (value: any) => value !== service.id
                                                                 )
                                                             )
                                                         }}
@@ -152,25 +248,130 @@ const BlogModal = () => {
                                  <FormMessage />
                             </FormItem>
                         )} />
-                        <FormField control={form.control} name="value" render={({field}) =>(
+                        <FormField control={form.control} name="description" render={({field}) =>(
                             <FormItem className="mt-3">
                                 <FormLabel>Description:</FormLabel>
                                 <FormControl>
-                                <Textarea placeholder="Type your message here." id="message" />
+                                <Textarea placeholder="Type your message here." id="message"  {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
-                        )} />
-                        <div className="pt-6 space-x-2 flex items-center justify-end w-full">
-                            <Button variant="outline" onClick={blogModal.onClose}>Cancel</Button>
-                            <Button type="submit">Save Client</Button>
-                        </div>
-                    </form>
+                        )} />                       
+                    
                   </Form>
                 </div>
         </div>
+    )
+  }
+
+   // --------------------- STEP UPLOAD ---------------------------------------
+
+  if(step === STEPS.UPLOAD){
+    bodyContent = (
+        <div>
+      <MultiFileDropzone
+        value={fileStates}
+        dropzoneOptions={{
+          maxFiles: 100,
+        }}
+        onChange={(files) => {
+          setFileStates(files);
+        }}
+        onFilesAdded={async (addedFiles) => {
+          setFileStates([...fileStates, ...addedFiles]);
+          await Promise.all(
+            addedFiles.map(async (addedFileState) => {
+              try {
+                const res = await edgestore.publicFiles.upload({
+                  file: addedFileState.file,
+                  onProgressChange: async (progress: number) => {
+                    updateFileProgress(addedFileState.key, progress);
+                    if (progress === 100) {
+                      // wait 1 second to set it to complete
+                      // so that the user can see the progress bar at 100%
+                      await new Promise((resolve) => setTimeout(resolve, 1000));
+                      updateFileProgress(addedFileState.key, "COMPLETE");
+                    }
+                  },
+                });
+                //
+                //console.log(fileStates)
+                setImages((state) => [...state, res.url])                
+              } catch (err) {
+                updateFileProgress(addedFileState.key, "ERROR");
+              }
+            })
+          );
+        }}
+      />
+    </div>
+    )
+  }
+  
+  // -------------------- STEP ORGANIZE ------------------------------------
+
+  if(step === STEPS.ORGANIZE){
+    console.log(images)
+    
+    bodyContent = (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          onDragCancel={handleDragCancel}
+          modifiers={[restrictToParentElement]}
+        >
+          <SortableContext items={images} strategy={rectSortingStrategy}>
+            <Grid columns={4}>
+              {images.map((url, index) => (
+                <SortablePhoto key={url} url={url} index={index} />
+              ))}
+            </Grid>
+          </SortableContext>
+          <DragOverlay adjustScale={true} modifiers={[restrictToParentElement]}>
+            {activeId ? (
+              <Photo url={activeId} index={images.indexOf(activeId)} />
+            ) : null}
+          </DragOverlay>
+      </DndContext>
+    )
+  }
+
+  function handleDragStart(event: any) {
+    setActiveId(event.active.id);
+  }
+
+  function handleDragEnd(event: any) {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      setImages((items) => {
+        const oldIndex = items.indexOf(active.id);
+        const newIndex = items.indexOf(over.id);
+
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+
+    setActiveId(null);
+  }
+
+  function handleDragCancel() {
+    setActiveId(null);
+  }
+
+  return (
+    <Modal 
+      title="Add Blog"
+      isOpen={blogModal.isOpen} 
+      onClose={blogModal.onClose}
+      body={bodyContent}
+      actionLabel={actionLabel}
+      onSubmit={form.handleSubmit(onSubmit)}
+      >
+        
     </Modal>
   )
 }
 
-export default BlogModal
