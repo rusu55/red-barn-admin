@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { ToasterProvider } from "@/providers/ToastProvider";
 import { EdgeStoreProvider } from "@/providers/EdgeStoreProvider";
+import { BlogModalProvider } from '@/providers/BlogModalProvider';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <BlogModalProvider />
         <ToasterProvider />
         <EdgeStoreProvider>{children}</EdgeStoreProvider>
       </body>

@@ -1,6 +1,6 @@
 "use client";
 import {
-  MultiImageDropzone,
+  MultiFileDropzone,
   type FileState,
 } from "@/components/FilesUpload/MultiFile";
 import { useEdgeStore } from "@/providers/EdgeStoreProvider";
@@ -9,6 +9,7 @@ import { useState } from "react";
 export default function MultiImageDropzoneUsage() {
   const [fileStates, setFileStates] = useState<FileState[]>([]);
   const { edgestore } = useEdgeStore();
+
   function updateFileProgress(key: string, progress: FileState["progress"]) {
     setFileStates((fileStates) => {
       const newFileStates = structuredClone(fileStates);
@@ -23,10 +24,10 @@ export default function MultiImageDropzoneUsage() {
   }
   return (
     <div>
-      <MultiImageDropzone
+      <MultiFileDropzone
         value={fileStates}
         dropzoneOptions={{
-          maxFiles: 6,
+          maxFiles: 100,
         }}
         onChange={(files) => {
           setFileStates(files);
@@ -38,7 +39,7 @@ export default function MultiImageDropzoneUsage() {
               try {
                 const res = await edgestore.publicFiles.upload({
                   file: addedFileState.file,
-                  onProgressChange: async (progress) => {
+                  onProgressChange: async (progress: number) => {
                     updateFileProgress(addedFileState.key, progress);
                     if (progress === 100) {
                       // wait 1 second to set it to complete

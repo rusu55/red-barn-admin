@@ -59,3 +59,9 @@ model VerificationToken {
   @@unique([identifier, token])
   @@map("verificationtokens")
 }
+
+model Blog {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  photos String[]
+  description String
+}
