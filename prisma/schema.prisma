@@ -61,7 +61,10 @@ model VerificationToken {
 }
 
 model Blog {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  photos String[]
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  photos      String[]
   description String
+  title       String
+  postDate    DateTime
+  postType    String[]
 }

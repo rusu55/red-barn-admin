@@ -4,7 +4,6 @@ import "./globals.css";
 
 import { ToasterProvider } from "@/providers/ToastProvider";
 import { EdgeStoreProvider } from "@/providers/EdgeStoreProvider";
-import ClientOnly from '@/components/ClientOnly';
 
 import { BlogModal } from "@/components/modals/BlogModal";
 
@@ -22,12 +21,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>     
-      <EdgeStoreProvider>
-        <BlogModal />
-        <ToasterProvider />
-        {children}
-      </EdgeStoreProvider>      
+      <body className={inter.className}>
+        <EdgeStoreProvider>
+          <BlogModal />
+          <ToasterProvider />
+          {children}
+        </EdgeStoreProvider>
       </body>
     </html>
   );

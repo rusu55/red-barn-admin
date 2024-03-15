@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { signIn } from "next-auth/react";
 
-import { Button } from "@/components/Button";
+import Button from "@/components/Button";
 import { Input } from "@/components/Input";
 
 export default function Home() {
@@ -26,7 +26,7 @@ export default function Home() {
   });
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    setIsLoading(true);    
+    setIsLoading(true);
     signIn("credentials", {
       ...data,
       redirect: false,
