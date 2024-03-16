@@ -27,6 +27,7 @@ export const BillboardBlogs = ({ data }: any) => {
         </Button>
       </div>
       <Separator />
+      <DataTable searchKey="blogTitle" columns={columns} data={data} />  
     </>
   );
 };

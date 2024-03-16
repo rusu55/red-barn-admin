@@ -16,3 +16,4 @@ export const POST = async (request: NextRequest) => {
     
     return NextResponse.json({error: 'salut'}, {status:201})
 }
+
