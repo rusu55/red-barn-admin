@@ -1,6 +1,11 @@
 import React from "react";
 
-export const Grid = ({ children, columns }: any) => {
+interface Props {
+  children: React.ReactNode;
+  columns: number;
+}
+
+export const Grid: React.FC<Props> = ({ children, columns }) => {
   return (
     <div
       style={{

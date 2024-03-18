@@ -67,4 +67,5 @@ model Blog {
   title       String
   postDate    DateTime
   postType    String[]
+  coverPhoto  String
 }

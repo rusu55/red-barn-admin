@@ -6,7 +6,7 @@ import { useForm, SubmitHandler, FieldValues } from "react-hook-form";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-
+import Image from "next/image";
 import {
   DndContext,
   closestCenter,
@@ -73,6 +73,7 @@ enum STEPS {
   INFO = 0,
   UPLOAD = 1,
   ORGANIZE = 2,
+  COVER = 3,
 }
 
 const photographyType = [
@@ -98,7 +99,8 @@ export const BlogModal = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(STEPS.INFO);
   const [fileStates, setFileStates] = useState<FileState[]>([]);
-  const [images, setImages] = useState<String[]>([]);
+  const [images, setImages] = useState<string[]>([]);
+  const [coverPhoto, setCoverPhoto] = useState<string>("");
 
   const [activeId, setActiveId] = useState(null);
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
@@ -123,7 +125,7 @@ export const BlogModal = () => {
   };
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    if (step !== STEPS.ORGANIZE) {
+    if (step !== STEPS.COVER) {
       return onNext();
     }
 
@@ -133,6 +135,7 @@ export const BlogModal = () => {
       photos: images,
       postType: data.postType,
       postDate: data.postDate,
+      coverPhoto: coverPhoto,
     };
 
     setIsLoading(true);
@@ -155,7 +158,7 @@ export const BlogModal = () => {
   };
 
   const actionLabel = useMemo(() => {
-    if (step === STEPS.ORGANIZE) {
+    if (step === STEPS.COVER) {
       return "Save Blog";
     }
 
@@ -388,6 +391,30 @@ export const BlogModal = () => {
           ) : null}
         </DragOverlay>
       </DndContext>
+    );
+  }
+
+  if (step === STEPS.COVER) {
+    bodyContent = (
+      <Grid columns={4}>
+        {images.map((url, index) => (
+          <div
+            key={index}
+            className={`relative overflow-hidden ${
+              coverPhoto === url ? "border-red-800 border-2" : null
+            }`}
+            onClick={() => setCoverPhoto(url)}
+          >
+            <Image
+              src={url}
+              alt=""
+              width={200}
+              height={200}
+              className="duration-500 ease-in-out hover:scale-110"
+            />
+          </div>
+        ))}
+      </Grid>
     );
   }
 

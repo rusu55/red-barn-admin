@@ -10,10 +10,11 @@ export const POST = async (request: NextRequest) => {
             postType: body.postType,
             description: body.description,
             photos: body.photos,
-            postDate: body.postDate
+            postDate: body.postDate,
+            coverPhoto: body.coverPhoto,
         }
     })
     
-    return NextResponse.json({error: 'salut'}, {status:201})
+    return NextResponse.json(newBlog, {status:201})
 }
 
