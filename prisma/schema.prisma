@@ -69,3 +69,9 @@ model Blog {
   postType    String[]
   coverPhoto  String
 }
+
+model Portfolio {
+  id  String   @id @default(auto()) @map("_id") @db.ObjectId
+  url String
+  tag String[]
+}

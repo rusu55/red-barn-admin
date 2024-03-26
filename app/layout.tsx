@@ -6,6 +6,7 @@ import { ToasterProvider } from "@/providers/ToastProvider";
 import { EdgeStoreProvider } from "@/providers/EdgeStoreProvider";
 
 import { BlogModal } from "@/components/modals/BlogModal";
+import { PortfolioModal } from "@/components/modals/PortfolioModal";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <EdgeStoreProvider>
           <BlogModal />
+          <PortfolioModal />
           <ToasterProvider />
           {children}
         </EdgeStoreProvider>
