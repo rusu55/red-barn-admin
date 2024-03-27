@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -9,7 +9,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -18,19 +18,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-
-
-export function DataTable({
-  columns,
-  data,
-  searchKey,
-}: any) {
-  
-  const [columnFilters, setColumnFilters] = useState([]);
+export function DataTable({ columns, data, searchKey }: any) {
+  const [columnFilters, setColumnFilters] = useState<any>([]);
   const table = useReactTable({
     data,
     columns,
@@ -40,7 +33,7 @@ export function DataTable({
     getFilteredRowModel: getFilteredRowModel(),
     state: {
       columnFilters,
-    }
+    },
   });
 
   return (
@@ -48,7 +41,7 @@ export function DataTable({
       <div className="flex items-center py-4">
         <Input
           placeholder="Search"
-          value={(table.getColumn(searchKey)?.getFilterValue()) ?? ""}
+          value={table.getColumn(searchKey)?.getFilterValue() ?? ""}
           onChange={(event) =>
             table.getColumn(searchKey)?.setFilterValue(event.target.value)
           }
@@ -70,7 +63,7 @@ export function DataTable({
                             header.getContext()
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -84,14 +77,20 @@ export function DataTable({
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
@@ -118,5 +117,5 @@ export function DataTable({
         </Button>
       </div>
     </div>
-  )
+  );
 }
