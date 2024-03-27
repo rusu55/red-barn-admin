@@ -18,7 +18,7 @@ const variants = {
 };
 
 export type FileState = {
-  file: File | string;
+  file: File;
   key: string; // used to identify the file in the progress callback
   progress: 'PENDING' | 'COMPLETE' | 'ERROR' | number;
 };

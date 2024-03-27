@@ -11,8 +11,8 @@ export const Grid: React.FC<Props> = ({ children, columns }) => {
       style={{
         display: "grid",
         gridTemplateColumns: `repeat(${columns}, 1fr)`,
-        gridGap: 10,
-        padding: 10,
+        gridGap: 4,
+        padding: 4,
       }}
     >
       {children}

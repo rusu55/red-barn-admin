@@ -49,9 +49,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 
 import {
-  MultiFileDropzone,
+  MultiImageDropzone,
   type FileState,
-} from "@/components/FilesUpload/MultiFile";
+} from "@/components/FilesUpload/MultiImages";
 
 import {
   Popover,
@@ -99,6 +99,14 @@ export const BlogModal = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(STEPS.INFO);
   const [fileStates, setFileStates] = useState<FileState[]>([]);
+
+  const [uploadRes, setUploadRes] = useState<
+      {
+        url: string;
+        filename: string;
+      }[]  
+    >([]);
+
   const [images, setImages] = useState<string[]>([]);
   const [coverPhoto, setCoverPhoto] = useState<string>("");
 
@@ -327,43 +335,60 @@ export const BlogModal = () => {
   if (step === STEPS.UPLOAD) {
     bodyContent = (
       <div>
-        <MultiFileDropzone
-          value={fileStates}
-          dropzoneOptions={{
-            maxFiles: 150,
-          }}
-          onChange={(files) => {
-            setFileStates(files);
-          }}
-          onFilesAdded={async (addedFiles) => {
-            setFileStates([...fileStates, ...addedFiles]);
-            await Promise.all(
-              addedFiles.map(async (addedFileState) => {
-                try {
-                  const res = await edgestore.publicFiles.upload({
-                    file: addedFileState.file,
-                    onProgressChange: async (progress: number) => {
-                      updateFileProgress(addedFileState.key, progress);
-                      if (progress === 100) {
-                        // wait 1 second to set it to complete
-                        // so that the user can see the progress bar at 100%
-                        await new Promise((resolve) =>
-                          setTimeout(resolve, 1000)
-                        );
-                        updateFileProgress(addedFileState.key, "COMPLETE");
-                      }
-                    },
-                  });
+      <MultiImageDropzone
+        value={fileStates}
+        dropzoneOptions={{
+          maxFiles: 150,
+          maxSize: 1920 * 1024 * 2, // 1 MB
+        }}
+        onChange={setFileStates}
+        onFilesAdded={async (addedFiles) => {
+          setFileStates([...fileStates, ...addedFiles]);
+        }}
+      />
 
-                  setImages((state) => [...state, res.url]);
-                } catch (err) {
-                  updateFileProgress(addedFileState.key, "ERROR");
+<Button
+        className="mt-2"
+        onClick={async () => {
+          await Promise.all(
+            fileStates.map(async (fileState) => {
+              try {
+                if (
+                  fileState.progress !== 'PENDING' ||
+                  typeof fileState.file === 'string'
+                ) {
+                  return;
                 }
-              })
-            );
-          }}
-        />
-      </div>
+                const res = await edgestore.publicFiles.upload({
+                  file: fileState.file,
+                  onProgressChange: async (progress) => {
+                    updateFileProgress(fileState.key, progress);
+                    if (progress === 100) {
+                      // wait 1 second to set it to complete
+                      // so that the user can see the progress bar
+                      await new Promise((resolve) => setTimeout(resolve, 1000));
+                      updateFileProgress(fileState.key, 'COMPLETE');
+                    }
+                  },
+                });
+                setImages((uploadRes) => [
+                  ...uploadRes, res.url                  
+                ]);
+              } catch (err) {
+                updateFileProgress(fileState.key, 'ERROR');
+              }
+            }),
+          );
+        }}
+        disabled={
+          !fileStates.filter((fileState) => fileState.progress === 'PENDING')
+            .length
+        }
+      >
+        Upload
+      </Button>
+      
+    </div>
     );
   }
 
