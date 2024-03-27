@@ -330,7 +330,7 @@ export const BlogModal = () => {
         <MultiFileDropzone
           value={fileStates}
           dropzoneOptions={{
-            maxFiles: 100,
+            maxFiles: 150,
           }}
           onChange={(files) => {
             setFileStates(files);

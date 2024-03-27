@@ -75,7 +75,11 @@ export default function Home() {
           {/* Footer */}
           <div className="flex flex-col gap-2 p-6">
             <div className="flex flex-row items-center w-full gap-4">
-              <Button onClick={handleSubmit(onSubmit)}>Login</Button>
+              <Button
+                disabled={isLoading}
+                onClick={handleSubmit(onSubmit)}
+                label="Login"
+              />
             </div>
           </div>
         </div>
