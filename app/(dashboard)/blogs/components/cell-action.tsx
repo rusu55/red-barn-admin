@@ -29,7 +29,7 @@ export const CellAction: React.FC<CellActionProps> = ({
   const params = useParams();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-    console.log(data)
+    
 
   const onConfirm = async () => {
     try {
@@ -44,6 +44,20 @@ export const CellAction: React.FC<CellActionProps> = ({
       setLoading(false);
     }
   };
+
+  const setHighlights = async (id: string) =>{    
+    
+     try{
+      setLoading(true);
+      await axios.patch(`/api/blogs/${id}`);
+      toast.success('Highlight Updated!');
+      router.refresh();
+    } catch (error) {
+      toast.error('Error dadding Highlight!');
+    } finally {      
+      setLoading(false);
+    }
+  }
 
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
@@ -73,7 +87,12 @@ export const CellAction: React.FC<CellActionProps> = ({
             <Copy className="mr-2 h-4 w-4" /> Copy Id
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => router.push(`/${params.storeId}/billboards/${data.id}`)}
+            onClick={() => setHighlights(data.id)}
+          >
+            <Copy className="mr-2 h-4 w-4" /> {data.highlights === 'yes' ? 'Remove as Highlight' : 'Set as Highlight'}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => setHighlights(data.id)}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>

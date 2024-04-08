@@ -12,6 +12,7 @@ export const POST = async (request: NextRequest) => {
             photos: body.photos,
             postDate: body.postDate,
             coverPhoto: body.coverPhoto,
+            highlights: body.highlights,
         }
     })
     

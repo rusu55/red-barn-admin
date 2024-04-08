@@ -68,6 +68,7 @@ model Blog {
   postDate    DateTime
   postType    String[]
   coverPhoto  String
+  highlights String
 }
 
 model Portfolio {

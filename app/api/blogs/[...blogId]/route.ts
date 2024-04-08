@@ -1,31 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/prisma/prisma';
 
+export const PATCH =  async (request: NextRequest, { params }: { params: { blogId: string }}) =>{
+ 
+  try{      
+        
+    let highlight;
+
+    const result = await prisma.blog.findFirst({
+      where: {
+        id: params.blogId.toString(),     
+      }         
+    });
+    
+    if (!result){
+      return new NextResponse('Blog Not Found!', {status:201});
+    }
+    
+    if(result.highlights === 'yes') {
+      highlight = ' '
+    } else {
+      highlight = 'yes'
+    }
+    
+    const blog = await prisma.blog.update({
+      where: {
+        id: params.blogId.toString(),
+      },
+       data:{
+          highlights : highlight,
+       }
+    });
+      return new NextResponse('Blog Updated!', {status:201});
+    }
+    catch(error){
+      return new NextResponse("Internal error", { status: 500 });
+    }
+}
+
 export const DELETE = async( request: NextRequest, { params }: { params: { blogId: string } }
     ) => {
       try {
-        /**  const { userId } = auth(); verify if logdin
-    
-        if (!userId) {
-          return new NextResponse("Unauthenticated", { status: 403 });
-        }
-    
-        if (!params.billboardId) {
-          return new NextResponse("Billboard id is required", { status: 400 });
-        }
-    
-        const storeByUserId = await prismadb.store.findFirst({
-          where: {
-            id: params.storeId,
-            userId,
-          }
-        });
-    
-        if (!storeByUserId) {
-          return new NextResponse("Unauthorized", { status: 405 });
-        }
-        */
-  
+         
         const blog = await prisma.blog.delete({
           where: {
             id: params.blogId.toString(),
