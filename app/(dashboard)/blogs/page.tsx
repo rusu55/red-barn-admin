@@ -17,7 +17,8 @@ const BlogsPage = async () => {
       blogType: blog.postType,
       photos: blog.photos,
       postDate: format(blog.postDate, 'MM/dd/yyyy'),
-      highlights: blog.highlights
+      highlights: blog.highlights,
+      sample: blog.sample
     }))
 
   }

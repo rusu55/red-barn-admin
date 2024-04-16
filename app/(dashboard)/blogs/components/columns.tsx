@@ -9,6 +9,7 @@ export type  BillboardColumn = {
   postDate: string;
   blogDescription: string;
   highlights: string;
+  sample: string;
 }
 
 export const columns: ColumnDef<BillboardColumn>[] = [
@@ -31,6 +32,10 @@ export const columns: ColumnDef<BillboardColumn>[] = [
   {
     accessorKey: "highlights",
     header: "Highlights",
+  },
+  {
+    accessorKey: "sample",
+    header: "Sample",
   },
   {
     id: "actions",

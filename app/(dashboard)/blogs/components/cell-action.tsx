@@ -49,7 +49,8 @@ export const CellAction: React.FC<CellActionProps> = ({
     
      try{
       setLoading(true);
-      await axios.patch(`/api/blogs/${id}`);
+      
+      await axios.patch(`/api/blogs/${id}`, {highlights: 'yes'});
       toast.success('Highlight Updated!');
       router.refresh();
     } catch (error) {
@@ -59,11 +60,25 @@ export const CellAction: React.FC<CellActionProps> = ({
     }
   }
 
+  const setSample = async (id: string, value: boolean) =>{    
+    
+    try{
+     setLoading(true);
+     await axios.patch(`/api/blogs/${id}`, {sample: value});
+     toast.success('Sample Updated!');
+     router.refresh();
+   } catch (error) {
+     toast.error('Error dadding Highlight!');
+   } finally {      
+     setLoading(false);
+   }
+ }
+
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
     toast.success('Billboard ID copied to clipboard.');
   }
-
+  
   return (
     <>
       <AlertModal 
@@ -92,7 +107,18 @@ export const CellAction: React.FC<CellActionProps> = ({
             <Copy className="mr-2 h-4 w-4" /> {data.highlights === 'yes' ? 'Remove as Highlight' : 'Set as Highlight'}
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => setHighlights(data.id)}
+            onClick={() => {              
+              const value = Boolean(data.sample) == true ? false : true
+              
+              setSample(data.id, value)}}
+          >
+            <Copy className="mr-2 h-4 w-4" /> {Boolean(data.sample) == true ? 'Remove as Sample' : 'Set as Sample'}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+             
+              setHighlights(data.id)
+            }}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>

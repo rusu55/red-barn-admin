@@ -69,6 +69,7 @@ model Blog {
   postType    String[]
   coverPhoto  String
   highlights String
+  sample Boolean @default(false)
 }
 
 model Portfolio {

@@ -144,6 +144,7 @@ export const BlogModal = () => {
       postType: data.postType,
       postDate: data.postDate,
       coverPhoto: coverPhoto,
+      highlights: 'no'
     };
 
     setIsLoading(true);
