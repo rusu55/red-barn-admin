@@ -6,29 +6,6 @@ import { useForm, SubmitHandler, FieldValues } from "react-hook-form";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import Image from "next/image";
-import {
-  DndContext,
-  closestCenter,
-  MouseSensor,
-  TouchSensor,
-  DragOverlay,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-
-import {
-  arrayMove,
-  SortableContext,
-  rectSortingStrategy,
-} from "@dnd-kit/sortable";
-
-import {
-  restrictToWindowEdges,
-  restrictToVerticalAxis,
-  restrictToParentElement,
-  restrictToFirstScrollableAncestor,
-} from "@dnd-kit/modifiers";
 
 import { Modal } from "./Modal";
 import { Heading } from "../Heading";
@@ -61,19 +38,15 @@ import {
 
 import { cn } from "@/lib/utils";
 
-import { Grid } from "@/components/sortable/Grid";
-import { SortablePhoto } from "@/components/sortable/SortablePhoto";
-import { Photo } from "@/components/sortable/Photo";
-
 import useBlogModal from "@/hooks/use-blog-modal";
 import { useEdgeStore } from "@/providers/EdgeStoreProvider";
+import Gallery from "@/app/(dashboard)/test/components/Gallery";
 
 // ---------- Setup ----------- //
 enum STEPS {
   INFO = 0,
   UPLOAD = 1,
   ORGANIZE = 2,
-  COVER = 3,
 }
 
 const photographyType = [
@@ -101,17 +74,13 @@ export const BlogModal = () => {
   const [fileStates, setFileStates] = useState<FileState[]>([]);
 
   const [uploadRes, setUploadRes] = useState<
-      {
-        url: string;
-        filename: string;
-      }[]  
-    >([]);
+    {
+      url: string;
+      filename: string;
+    }[]
+  >([]);
 
   const [images, setImages] = useState<string[]>([]);
-  const [coverPhoto, setCoverPhoto] = useState<string>("");
-
-  const [activeId, setActiveId] = useState(null);
-  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
 
   const form = useForm<FieldValues>({
     resolver: zodResolver(formSchema),
@@ -133,7 +102,7 @@ export const BlogModal = () => {
   };
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    if (step !== STEPS.COVER) {
+    if (step !== STEPS.ORGANIZE) {
       return onNext();
     }
 
@@ -143,8 +112,8 @@ export const BlogModal = () => {
       photos: images,
       postType: data.postType,
       postDate: data.postDate,
-      coverPhoto: coverPhoto,
-      highlights: 'no'
+      coverPhoto: "",
+      highlights: "no",
     };
 
     setIsLoading(true);
@@ -167,7 +136,7 @@ export const BlogModal = () => {
   };
 
   const actionLabel = useMemo(() => {
-    if (step === STEPS.COVER) {
+    if (step === STEPS.ORGANIZE) {
       return "Save Blog";
     }
 
@@ -336,135 +305,65 @@ export const BlogModal = () => {
   if (step === STEPS.UPLOAD) {
     bodyContent = (
       <div>
-      <MultiImageDropzone
-        value={fileStates}
-        dropzoneOptions={{
-          maxFiles: 150,
-          maxSize: 1920 * 1024 * 2, // 1 MB
-        }}
-        onChange={setFileStates}
-        onFilesAdded={async (addedFiles) => {
-          setFileStates([...fileStates, ...addedFiles]);
-        }}
-      />
+        <MultiImageDropzone
+          value={fileStates}
+          dropzoneOptions={{
+            maxFiles: 150,
+            maxSize: 1920 * 1024 * 2, // 1 MB
+          }}
+          onChange={setFileStates}
+          onFilesAdded={async (addedFiles) => {
+            setFileStates([...fileStates, ...addedFiles]);
+          }}
+        />
 
-<Button
-        className="mt-2"
-        onClick={async () => {
-          await Promise.all(
-            fileStates.map(async (fileState) => {
-              try {
-                if (
-                  fileState.progress !== 'PENDING' ||
-                  typeof fileState.file === 'string'
-                ) {
-                  return;
+        <Button
+          className="mt-2"
+          onClick={async () => {
+            await Promise.all(
+              fileStates.map(async (fileState) => {
+                try {
+                  if (
+                    fileState.progress !== "PENDING" ||
+                    typeof fileState.file === "string"
+                  ) {
+                    return;
+                  }
+                  const res = await edgestore.publicFiles.upload({
+                    file: fileState.file,
+                    onProgressChange: async (progress) => {
+                      updateFileProgress(fileState.key, progress);
+                      if (progress === 100) {
+                        // wait 1 second to set it to complete
+                        // so that the user can see the progress bar
+                        await new Promise((resolve) =>
+                          setTimeout(resolve, 1000)
+                        );
+                        updateFileProgress(fileState.key, "COMPLETE");
+                      }
+                    },
+                  });
+                  setImages((uploadRes) => [...uploadRes, res.url]);
+                } catch (err) {
+                  updateFileProgress(fileState.key, "ERROR");
                 }
-                const res = await edgestore.publicFiles.upload({
-                  file: fileState.file,
-                  onProgressChange: async (progress) => {
-                    updateFileProgress(fileState.key, progress);
-                    if (progress === 100) {
-                      // wait 1 second to set it to complete
-                      // so that the user can see the progress bar
-                      await new Promise((resolve) => setTimeout(resolve, 1000));
-                      updateFileProgress(fileState.key, 'COMPLETE');
-                    }
-                  },
-                });
-                setImages((uploadRes) => [
-                  ...uploadRes, res.url                  
-                ]);
-              } catch (err) {
-                updateFileProgress(fileState.key, 'ERROR');
-              }
-            }),
-          );
-        }}
-        disabled={
-          !fileStates.filter((fileState) => fileState.progress === 'PENDING')
-            .length
-        }
-      >
-        Upload
-      </Button>
-      
-    </div>
+              })
+            );
+          }}
+          disabled={
+            !fileStates.filter((fileState) => fileState.progress === "PENDING")
+              .length
+          }
+        >
+          Upload
+        </Button>
+      </div>
     );
   }
 
   //--------------- STEP ORGANIZE
   if (step === STEPS.ORGANIZE) {
-    bodyContent = (
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-        onDragCancel={handleDragCancel}
-        modifiers={[restrictToParentElement]}
-      >
-        <SortableContext items={images} strategy={rectSortingStrategy}>
-          <Grid columns={4}>
-            {images.map((url, index) => (
-              <SortablePhoto key={url} url={url} index={index} />
-            ))}
-          </Grid>
-        </SortableContext>
-        <DragOverlay adjustScale={true} modifiers={[restrictToParentElement]}>
-          {activeId ? (
-            <Photo url={activeId} index={images.indexOf(activeId)} />
-          ) : null}
-        </DragOverlay>
-      </DndContext>
-    );
-  }
-
-  if (step === STEPS.COVER) {
-    bodyContent = (
-      <Grid columns={4}>
-        {images.map((url, index) => (
-          <div
-            key={index}
-            className={`relative overflow-hidden ${
-              coverPhoto === url ? "border-red-800 border-2" : null
-            }`}
-            onClick={() => setCoverPhoto(url)}
-          >
-            <Image
-              src={url}
-              alt=""
-              width={200}
-              height={200}
-              className="duration-500 ease-in-out hover:scale-110"
-            />
-          </div>
-        ))}
-      </Grid>
-    );
-  }
-
-  function handleDragStart(event: any) {
-    setActiveId(event.active.id);
-  }
-
-  function handleDragEnd(event: any) {
-    const { active, over } = event;
-
-    if (active.id !== over.id) {
-      setImages((items) => {
-        const oldIndex = items.indexOf(active.id);
-        const newIndex = items.indexOf(over.id);
-
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-
-    setActiveId(null);
-  }
-
-  function handleDragCancel() {
-    setActiveId(null);
+    bodyContent = <Gallery images={images} setImages={setImages} />;
   }
 
   return (
