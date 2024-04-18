@@ -8,15 +8,25 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 
 import { Modal } from "./Modal";
-import { Heading } from "../Heading";
+
+
 import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from "../ui/form";
+    Form,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormControl,
+    FormMessage,
+  } from "../ui/form";
+
+
+  import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+  } from "@/components/ui/popover";
+
+import { Heading } from "../Heading";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
@@ -24,23 +34,20 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 import {
   MultiImageDropzone,
   type FileState,
 } from "@/components/FilesUpload/MultiImages";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 
-import { cn } from "@/lib/utils";
 
 import useBlogModal from "@/hooks/use-blog-modal";
 import { useEdgeStore } from "@/providers/EdgeStoreProvider";
 import Gallery from "@/app/(dashboard)/test/components/Gallery";
+
+import MultiImagesDrop from "../FilesUpload/MultiImagesDrop";
 
 // ---------- Setup ----------- //
 enum STEPS {
@@ -62,6 +69,7 @@ const formSchema = z.object({
     message: "You have to select at least one item.",
   }),
 });
+
 
 export const BlogModal = () => {
   let bodyContent;
@@ -151,213 +159,154 @@ export const BlogModal = () => {
     return "Back";
   }, [step]);
 
-  // -------------------- FUNCTION FOR UPLOAD --------------- //
-  function updateFileProgress(key: string, progress: FileState["progress"]) {
-    setFileStates((fileStates) => {
-      const newFileStates = structuredClone(fileStates);
-      const fileState = newFileStates.find(
-        (fileState) => fileState.key === key
-      );
-      if (fileState) {
-        fileState.progress = progress;
-      }
-      return newFileStates;
-    });
-  }
+  
 
   //---------------- STEP INFO
   if (step === STEPS.INFO) {
     bodyContent = (
       <div className="flex flex-col gap-8">
-        <Heading title="Blog Info" subtitle="Short and sweet works best!" />
-        <div className="space-y-4 py-2 pb-4">
-          <Form {...form}>
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Blog Title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Blog Title" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="postDate"
-              render={({ field }) => (
-                <FormItem className="flex flex-col mt-3">
-                  <FormLabel>Posting Date: </FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-[240px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
+      <Heading title="Blog Info" subtitle="Short and sweet works best!" />
+      <div className="space-y-4 py-2 pb-4">
+        <Form {...form}>
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Blog Title</FormLabel>
+                <FormControl>
+                  <Input placeholder="Blog Title" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+  
+          <FormField
+            control={form.control}
+            name="postDate"
+            render={({ field }) => (
+              <FormItem className="flex flex-col mt-3">
+                <FormLabel>Posting Date: </FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-[240px] pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date("1900-01-01")
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+  
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="postType"
+            render={() => (
+              <FormItem className="mt-3">
+                <div className="mb-4">
+                  <FormLabel className="text-base">
+                    Photography Type
+                  </FormLabel>
+                </div>
+                {photographyType.map((service) => (
+                  <FormField
+                    key={service.id}
+                    control={form.control}
+                    name="postType"
+                    render={({ field }) => {
+                      return (
+                        <FormItem
+                          key={service.id}
+                          className="flex flex-row items-start space-x-3 space-y-0"
                         >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="postType"
-              render={() => (
-                <FormItem className="mt-3">
-                  <div className="mb-4">
-                    <FormLabel className="text-base">
-                      Photography Type
-                    </FormLabel>
-                  </div>
-                  {photographyType.map((service) => (
-                    <FormField
-                      key={service.id}
-                      control={form.control}
-                      name="postType"
-                      render={({ field }) => {
-                        return (
-                          <FormItem
-                            key={service.id}
-                            className="flex flex-row items-start space-x-3 space-y-0"
-                          >
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(service.id)}
-                                onCheckedChange={(checked) => {
-                                  return checked
-                                    ? field.onChange([
-                                        ...field.value,
-                                        service.id,
-                                      ])
-                                    : field.onChange(
-                                        field.value?.filter(
-                                          (value: any) => value !== service.id
-                                        )
-                                      );
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {service.label}
-                            </FormLabel>
-                          </FormItem>
-                        );
-                      }}
-                    />
-                  ))}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem className="mt-3">
-                  <FormLabel>Description:</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Type your message here."
-                      id="message"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </Form>
-        </div>
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(service.id)}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([
+                                      ...field.value,
+                                      service.id,
+                                    ])
+                                  : field.onChange(
+                                      field.value?.filter(
+                                        (value: any) => value !== service.id
+                                      )
+                                    );
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {service.label}
+                          </FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem className="mt-3">
+                <FormLabel>Description:</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Type your message here."
+                    id="message"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </Form>
       </div>
+    </div>
     );
   }
 
   //---------------- STEP UPLOAD
   if (step === STEPS.UPLOAD) {
     bodyContent = (
-      <div>
-        <MultiImageDropzone
-          value={fileStates}
-          dropzoneOptions={{
-            maxFiles: 150,
-            maxSize: 1920 * 1024 * 2, // 1 MB
-          }}
-          onChange={setFileStates}
-          onFilesAdded={async (addedFiles) => {
-            setFileStates([...fileStates, ...addedFiles]);
-          }}
-        />
-
-        <Button
-          className="mt-2"
-          onClick={async () => {
-            await Promise.all(
-              fileStates.map(async (fileState) => {
-                try {
-                  if (
-                    fileState.progress !== "PENDING" ||
-                    typeof fileState.file === "string"
-                  ) {
-                    return;
-                  }
-                  const res = await edgestore.publicFiles.upload({
-                    file: fileState.file,
-                    onProgressChange: async (progress) => {
-                      updateFileProgress(fileState.key, progress);
-                      if (progress === 100) {
-                        // wait 1 second to set it to complete
-                        // so that the user can see the progress bar
-                        await new Promise((resolve) =>
-                          setTimeout(resolve, 1000)
-                        );
-                        updateFileProgress(fileState.key, "COMPLETE");
-                      }
-                    },
-                  });
-                  setImages((uploadRes) => [...uploadRes, res.url]);
-                } catch (err) {
-                  updateFileProgress(fileState.key, "ERROR");
-                }
-              })
-            );
-          }}
-          disabled={
-            !fileStates.filter((fileState) => fileState.progress === "PENDING")
-              .length
-          }
-        >
-          Upload
-        </Button>
-      </div>
+      <MultiImagesDrop 
+          fileStates={fileStates} 
+          setFileStates={setFileStates}
+          edgestore ={edgestore}
+          images={images}
+          setImages={setImages}
+          />     
     );
   }
 
