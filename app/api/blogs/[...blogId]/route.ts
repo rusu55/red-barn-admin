@@ -2,12 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/prisma/prisma';
 
 export const PATCH =  async (request: NextRequest, { params }: { params: { blogId: string }}) =>{
-  const body = await request.json();
-  console.log(body.sample)
-  try{      
+  const body = await request.json();  
+  try{         
     
-    //let highlight;
-
     const result = await prisma.blog.findFirst({
       where: {
         id: params.blogId.toString(),     
@@ -17,24 +14,7 @@ export const PATCH =  async (request: NextRequest, { params }: { params: { blogI
     if (!result){
       return new NextResponse('Blog Not Found!', {status:201});
     }
-    //console.log(data)
-    /*
-    if(result.highlights === 'yes') {
-      highlight = ' '
-    } else {
-      highlight = 'yes'
-    }
     
-    const blog = await prisma.blog.update({
-      where: {
-        id: params.blogId.toString(),
-      },
-       data:{
-          highlights : highlight,
-       }
-    });
-    */
-
     const blog = await prisma.blog.update({
       where: {
         id: params.blogId.toString(),

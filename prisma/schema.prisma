@@ -70,6 +70,8 @@ model Blog {
   coverPhoto  String
   highlights String
   sample Boolean @default(false)
+  orderBy Int?
+
 }
 
 model Portfolio {

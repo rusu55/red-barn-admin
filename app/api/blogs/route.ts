@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/prisma/prisma';
 import { format } from "date-fns";
-import _ from "lodash"
+import _, { orderBy } from "lodash"
+
 
 export const POST = async (request: NextRequest) => {
     const body = await request.json();
@@ -24,7 +25,11 @@ export const POST = async (request: NextRequest) => {
 export const GET = async (response: NextResponse) => {
 
     try {
-        const blogs = await prisma.blog.findMany({})
+        const blogs = await prisma.blog.findMany({
+            orderBy: [
+                { orderBy: 'asc'}
+            ]
+        })
 
         if(blogs) {
 
@@ -46,5 +51,26 @@ export const GET = async (response: NextResponse) => {
         return new NextResponse("Internal error", { status: 500 });
     }
 
+}
+
+export const PATCH = async (request: NextRequest) =>{
+    const body = await request.json()
+    console.log(body)
+    
+    const formatedData = body.map((blog: any, index: number) => ({
+        id: blog.blogId.toString(),
+        orderBy: index
+    }))
+
+    await prisma.$transaction(
+        body.map((blog: any, index: number)=>(
+            prisma.blog.updateMany({
+                where: {id: blog.blogId},
+                data: { orderBy: index}
+            })
+        ))
+    )
+
+    return NextResponse.json('Blog Updated', {status: 201})
 }
 

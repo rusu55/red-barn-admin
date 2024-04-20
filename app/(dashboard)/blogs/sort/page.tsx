@@ -2,6 +2,7 @@
 import NoSSRComponent from './NoSSRComponent';
 
 import React, {useEffect, useMemo, useState} from 'react';
+import { useRouter } from "next/navigation";
 import axios from 'axios';
 import {Button} from '@/components/ui/button';
 import {   
@@ -33,11 +34,16 @@ import {
 
 import DraggableRow from './components/RawComponent';
 import {columns} from './components/Columns';
+import toast from 'react-hot-toast';
 
 
 
 const page =  () => {
    const [data, setData] = useState([])
+   const [loading, setLoading] = useState(false);
+
+   const router = useRouter()
+
     useEffect(()=>{
         const fetchData = async () => {
             try{
@@ -58,7 +64,15 @@ const page =  () => {
       )
       
       const handleChanges = () => {
-        console.log(data)
+        setLoading(true)
+          axios.patch('/api/blogs', data)
+            .then(() =>{
+              toast.success("Blog updated!");
+              router.refresh();
+              router.push('/blogs/')
+            })
+            .catch((error) => toast.error('Error updating!'))
+            .finally(()=> setLoading(false))
       }
     
       const table = useReactTable({

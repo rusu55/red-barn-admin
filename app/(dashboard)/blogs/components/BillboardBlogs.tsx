@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Heading from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,10 @@ export const BillboardBlogs = ({ data }: any) => {
   const params = useParams();
   const router = useRouter();
   const blogModal = useBlogModal();
+ 
+  useEffect(()=>{
+    router.refresh()
+  }, [])
 
   const [isOpen, setIsOpen] = useState(false);
   return (

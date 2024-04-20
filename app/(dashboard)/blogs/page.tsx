@@ -6,7 +6,11 @@ import { format } from "date-fns";
 
 const BlogsPage = async () => {
   let formatedData
-  const blogs = await prisma.blog.findMany({})
+  const blogs = await prisma.blog.findMany({
+    orderBy: [
+      { orderBy: 'asc'}
+  ]
+  })
   
   if(blogs) {
 
