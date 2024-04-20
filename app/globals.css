@@ -46,7 +46,46 @@
   .container {
     background-color: #fff;
   }
- 
+  table {
+    border: 1px solid lightgray;
+    width: 100%;
+  }
+  
+  tbody {
+    border-bottom: 1px solid lightgray;
+  }
+  
+  th {
+    border-bottom: 1px solid lightgray;
+    border-right: 1px solid lightgray;
+    padding: 2px 4px;
+  }
+  
+  td {
+    border-right: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+    padding: 10px 20px;
+    background-color: white;
+    text-align: center;
+  }
+  
+  td button {
+    padding: 1px 1rem;
+    cursor: grab;
+  }
+  
+  td:last-child {
+    border-right: 0;
+  }
+  
+  tfoot {
+    color: gray;
+  }
+  
+  tfoot th {
+    font-weight: normal;
+  }
+  
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;

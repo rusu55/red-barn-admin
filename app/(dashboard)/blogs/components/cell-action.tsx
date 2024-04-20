@@ -102,10 +102,16 @@ export const CellAction: React.FC<CellActionProps> = ({
             <Copy className="mr-2 h-4 w-4" /> Copy Id
           </DropdownMenuItem>
           <DropdownMenuItem
+            onClick={() => router.push('/blogs/sort/')}
+          >
+            <Edit className="mr-2 h-4 w-4" /> Setup Blog Order
+          </DropdownMenuItem>
+          <DropdownMenuItem
             onClick={() => setHighlights(data.id)}
           >
             <Copy className="mr-2 h-4 w-4" /> {data.highlights === 'yes' ? 'Remove as Highlight' : 'Set as Highlight'}
           </DropdownMenuItem>
+          
           <DropdownMenuItem
             onClick={() => {              
               const value = Boolean(data.sample) == true ? false : true
