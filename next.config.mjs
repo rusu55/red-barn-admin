@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {    
+const nextConfig = { 
+    basePath: '/admin',   
     images: {
         domains: ['files.edgestore.dev']
       },
