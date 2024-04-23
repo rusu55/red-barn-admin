@@ -45,12 +45,12 @@ export const CellAction: React.FC<CellActionProps> = ({
     }
   };
 
-  const setHighlights = async (id: string) =>{    
+  const setHighlights = async (id: string, value: boolean) =>{    
     
      try{
       setLoading(true);
       
-      await axios.patch(`/api/blogs/${id}`, {highlights: 'yes'});
+      await axios.patch(`/api/blogs/${id}`, {highlights: value});
       toast.success('Highlight Updated!');
       router.refresh();
     } catch (error) {
@@ -64,6 +64,7 @@ export const CellAction: React.FC<CellActionProps> = ({
     
     try{
      setLoading(true);
+     
      await axios.patch(`/api/blogs/${id}`, {sample: value});
      toast.success('Sample Updated!');
      router.refresh();
@@ -107,13 +108,16 @@ export const CellAction: React.FC<CellActionProps> = ({
             <Edit className="mr-2 h-4 w-4" /> Setup Blog Order
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => setHighlights(data.id)}
+            onClick={() => {
+              const value = Boolean(data.highlights) == true ? false : true
+              setHighlights(data.id, value)}}
           >
-            <Copy className="mr-2 h-4 w-4" /> {data.highlights === 'yes' ? 'Remove as Highlight' : 'Set as Highlight'}
+            <Copy className="mr-2 h-4 w-4" /> {Boolean(data.highlights) == true ? 'Remove as Highlight' : 'Set as Highlight'}
           </DropdownMenuItem>
           
           <DropdownMenuItem
-            onClick={() => {              
+            onClick={() => {  
+                       
               const value = Boolean(data.sample) == true ? false : true
               
               setSample(data.id, value)}}
@@ -123,7 +127,7 @@ export const CellAction: React.FC<CellActionProps> = ({
           <DropdownMenuItem
             onClick={() => {
              
-              setHighlights(data.id)
+             
             }}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
