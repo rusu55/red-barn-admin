@@ -65,7 +65,7 @@ export function UserNav({ label }: any) {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={() => signOut({ callbackUrl: "http://admin.redbarnweddingstudio.xyz", redirect: true })}
+          onClick={() => signOut({ callbackUrl: "http://admin.redbarnweddingstudio.xyz"})}
         >
           Log out
         </DropdownMenuItem>
