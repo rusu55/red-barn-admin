@@ -14,8 +14,8 @@ export const POST = async (request: NextRequest) => {
             description: body.description,
             photos: body.photos,
             postDate: body.postDate,
-            coverPhoto: body.coverPhoto,
-            highlights: body.highlights,
+            highlights: false,
+            sample: false,
         }
     })
     
