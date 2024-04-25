@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Copy, Edit, MoreHorizontal, Trash, BookImage } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
+import { useEdgeStore } from "@/providers/EdgeStoreProvider";
 
 import { Button } from "@/components/ui/button";
 import { 
@@ -27,6 +28,7 @@ export const CellAction: React.FC<CellActionProps> = ({
 }) => {
   const router = useRouter();
   const params = useParams();
+  const { edgestore } = useEdgeStore();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
     
@@ -34,7 +36,14 @@ export const CellAction: React.FC<CellActionProps> = ({
   const onConfirm = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/blogs/${data.id}`);
+      const blog = await axios.get(`/api/blogs/${data.id}`);
+      console.log(blog)
+      for(let i = 0; i < blog.data.photos.length; i++ ) {
+        await edgestore.publicFiles.delete({
+          url: blog.data.photos[i],
+        })
+      }
+     await axios.delete(`/api/blogs/${data.id}`);
       toast.success('Blog deleted!');
       router.refresh();
     } catch (error) {
