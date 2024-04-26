@@ -16,12 +16,9 @@ export const BillboardBlogs = ({ data }: any) => {
   const params = useParams();
   const router = useRouter();
   const blogModal = useBlogModal();
+  
  
-  useEffect(()=>{
-    router.refresh()
-  }, [])
-
-  const [isOpen, setIsOpen] = useState(false);
+  
   return (
     <>
       <div className="flex items-center justify-between">

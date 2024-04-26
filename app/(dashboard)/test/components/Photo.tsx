@@ -18,3 +18,5 @@ export const Photo = forwardRef(
     return <div ref={ref} style={inlineStyles} {...props} />;
   }
 );
+
+Photo.displayName = 'Photo';

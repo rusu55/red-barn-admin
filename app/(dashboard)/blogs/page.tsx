@@ -4,6 +4,7 @@ import prisma from "@/prisma/prisma";
 import { BillboardBlogs } from "./components/BillboardBlogs";
 import { format } from "date-fns";
 import { UserNav } from "@/components/nav/UserNav";
+export const dynamic = 'force-dynamic'
 
 const BlogsPage = async () => {
   let formatedData;

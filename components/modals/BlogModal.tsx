@@ -32,7 +32,13 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
@@ -65,9 +71,7 @@ const formSchema = z.object({
   title: z.string().nonempty("Field is required"),
   postDate: z.date(),
   description: z.string().optional(),
-  postType: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: "You have to select at least one item.",
-  }),
+  postType: z.string().nonempty("Field is required"),
 });
 
 
@@ -113,7 +117,7 @@ export const BlogModal = () => {
     if (step !== STEPS.ORGANIZE) {
       return onNext();
     }
-
+    
     const formatedData = {
       title: data.title,
       description: data.description,
@@ -121,7 +125,7 @@ export const BlogModal = () => {
       postType: data.postType,
       postDate: data.postDate,
       coverPhoto: "",
-      highlights: "no",
+      highlights: Boolean(false),
     };
 
     setIsLoading(true);
@@ -141,6 +145,7 @@ export const BlogModal = () => {
       .finally(() => {
         setIsLoading(false);
       });
+      
   };
 
   const actionLabel = useMemo(() => {
@@ -227,50 +232,24 @@ export const BlogModal = () => {
           <FormField
             control={form.control}
             name="postType"
-            render={() => (
+            render={({field}) => (
               <FormItem className="mt-3">
                 <div className="mb-4">
                   <FormLabel className="text-base">
                     Photography Type
                   </FormLabel>
                 </div>
-                {photographyType.map((service) => (
-                  <FormField
-                    key={service.id}
-                    control={form.control}
-                    name="postType"
-                    render={({ field }) => {
-                      return (
-                        <FormItem
-                          key={service.id}
-                          className="flex flex-row items-start space-x-3 space-y-0"
-                        >
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value?.includes(service.id)}
-                              onCheckedChange={(checked) => {
-                                return checked
-                                  ? field.onChange([
-                                      ...field.value,
-                                      service.id,
-                                    ])
-                                  : field.onChange(
-                                      field.value?.filter(
-                                        (value: any) => value !== service.id
-                                      )
-                                    );
-                              }}
-                            />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            {service.label}
-                          </FormLabel>
-                        </FormItem>
-                      );
-                    }}
-                  />
-                ))}
-                <FormMessage />
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Photography Type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="wedding">Wedding Photography</SelectItem>
+                    <SelectItem value="engagement">Engagement Photography</SelectItem>                    
+                  </SelectContent>
+                </Select>
               </FormItem>
             )}
           />
@@ -299,6 +278,7 @@ export const BlogModal = () => {
 
   //---------------- STEP UPLOAD
   if (step === STEPS.UPLOAD) {
+    
     bodyContent = (
       <MultiImagesDrop 
           fileStates={fileStates} 
@@ -307,12 +287,13 @@ export const BlogModal = () => {
           images={images}
           setImages={setImages}
           />     
-    );
+     );
+     
   }
 
   //--------------- STEP ORGANIZE
   if (step === STEPS.ORGANIZE) {
-    bodyContent = <Gallery images={images} setImages={setImages} />;
+     bodyContent = <Gallery images={images} setImages={setImages} />; 
   }
 
   return (

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/prisma/prisma';
+export const dynamic = 'force-dynamic' 
 
 export const GET = async (requst: NextRequest, {params}: {params: {blogId: string}}) =>{
   try {
@@ -45,7 +46,7 @@ export const PATCH =  async (request: NextRequest, { params }: { params: { blogI
        // sample: body.sample
       }
     })
-      return new NextResponse('Blog Updated!', {status:201});
+      return NextResponse.json(blog, {status:201});
     }
     catch(error){
       return new NextResponse("Internal error", { status: 500 });

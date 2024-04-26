@@ -67,7 +67,7 @@ export const PortfolioModal = () => {
         url: res?.url,
         tag: data.tagType,
       };
-      console.log(formatData);
+      
       axios
         .post("/api/portfolio", formatData)
         .then(() => {

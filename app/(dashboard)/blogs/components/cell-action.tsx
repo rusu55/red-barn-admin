@@ -31,13 +31,14 @@ export const CellAction: React.FC<CellActionProps> = ({
   const { edgestore } = useEdgeStore();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  
     
 
   const onConfirm = async () => {
     try {
       setLoading(true);
       const blog = await axios.get(`/api/blogs/${data.id}`);
-      console.log(blog)
+      
       for(let i = 0; i < blog.data.photos.length; i++ ) {
         await edgestore.publicFiles.delete({
           url: blog.data.photos[i],
@@ -56,17 +57,17 @@ export const CellAction: React.FC<CellActionProps> = ({
 
   const setHighlights = async (id: string, value: boolean) =>{    
     
-     try{
       setLoading(true);
       
-      await axios.patch(`/api/blogs/${id}`, {highlights: value});
-      toast.success('Highlight Updated!');
-      router.refresh();
-    } catch (error) {
-      toast.error('Error dadding Highlight!');
-    } finally {      
-      setLoading(false);
-    }
+      await axios.patch(`/api/blogs/${id}`, {highlights: value})
+      .then(()=>{      
+        
+        router.refresh();
+      })
+      .catch(() => {
+        toast.error("Something went wrong.");
+      })
+      .finally(() => toast.success('Highlight Updated!'));
   }
 
   const setSample = async (id: string, value: boolean) =>{    

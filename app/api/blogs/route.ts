@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/prisma/prisma';
 import { format } from "date-fns";
-import _, { orderBy } from "lodash"
-
+import _ from "lodash"
+export const dynamic = 'force-dynamic' 
 
 export const POST = async (request: NextRequest) => {
     const body = await request.json();
@@ -14,15 +14,15 @@ export const POST = async (request: NextRequest) => {
             description: body.description,
             photos: body.photos,
             postDate: body.postDate,
-            coverPhoto: body.coverPhoto,
-            highlights: body.highlights,
+            coverPhoto: body?.coverPhoto,
+            highlights: body?.highlights,
         }
     })
     
     return NextResponse.json(newBlog, {status:201})
 }
 
-export const GET = async (response: NextResponse) => {
+export const GET = async () => {
 
     try {
         const blogs = await prisma.blog.findMany({
@@ -54,8 +54,7 @@ export const GET = async (response: NextResponse) => {
 }
 
 export const PATCH = async (request: NextRequest) =>{
-    const body = await request.json()
-    console.log(body)
+    const body = await request.json()   
     
     const formatedData = body.map((blog: any, index: number) => ({
         id: blog.blogId.toString(),

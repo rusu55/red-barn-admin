@@ -3,8 +3,8 @@ import prisma from "@/prisma/prisma";
 import Link from "next/link";
 import  Heading  from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { BlogNav } from "../components/BlogNav";
 
 const BlogPAge = async ({params}: {params: {blogId : string}}) => {
   const pictures = await prisma.blog.findFirst({
@@ -22,6 +22,7 @@ const BlogPAge = async ({params}: {params: {blogId : string}}) => {
             </Button>
         </div>
         <Separator />
+        <BlogNav />
         <div className='flex flex-col space-y-4 items-center mt-8'>
            {pictures?.photos.map((picture: string, index: number) =>(
                 <div key={index} className="relative overflow-hidden">

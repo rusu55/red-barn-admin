@@ -4,6 +4,17 @@ const nextConfig = {
     images: {
         domains: ['files.edgestore.dev']
       },
+      headers: () => [
+        {
+          source: '/',
+          headers: [
+            {
+              key: 'Cache-Control',
+              value: 'no-store',
+            },
+          ],
+        },
+      ],
 }
 
 module.exports = nextConfig

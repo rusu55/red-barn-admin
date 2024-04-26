@@ -38,7 +38,7 @@ import toast from 'react-hot-toast';
 
 
 
-const page =  () => {
+const SortPage =  () => {
    const [data, setData] = useState([])
    const [loading, setLoading] = useState(false);
 
@@ -155,4 +155,4 @@ const page =  () => {
   )
 }
 
-export default page
+export default SortPage

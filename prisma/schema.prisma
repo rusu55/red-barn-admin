@@ -66,8 +66,8 @@ model Blog {
   description String
   title       String
   postDate    DateTime
-  postType    String[]
-  coverPhoto  String
+  postType    String
+  coverPhoto  String?
   highlights Boolean @default(false)
   sample Boolean @default(false)
   orderBy Int?
