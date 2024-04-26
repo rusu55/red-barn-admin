@@ -8,12 +8,12 @@ import { useParams, useRouter } from "next/navigation";
 import { useEdgeStore } from "@/providers/EdgeStoreProvider";
 
 import { Button } from "@/components/ui/button";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuTrigger
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AlertModal } from "@/components/modals/AlertModal";
 
@@ -23,9 +23,7 @@ interface CellActionProps {
   data: BillboardColumn;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({
-  data,
-}) => {
+export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const router = useRouter();
   const params = useParams();
   const { edgestore } = useEdgeStore();
@@ -38,17 +36,19 @@ export const CellAction: React.FC<CellActionProps> = ({
     try {
       setLoading(true);
       const blog = await axios.get(`/api/blogs/${data.id}`);
+      console.log(blog.data.photos.length);
+      for (let i = 0; i < blog.data.photos.length; i++) {
       
       for(let i = 0; i < blog.data.photos.length; i++ ) {
         await edgestore.publicFiles.delete({
           url: blog.data.photos[i],
-        })
+        });
       }
-     await axios.delete(`/api/blogs/${data.id}`);
-      toast.success('Blog deleted!');
+      await axios.delete(`/api/blogs/${data.id}`);
+      toast.success("Blog deleted!");
       router.refresh();
     } catch (error) {
-      toast.error('Error deleting the blog!');
+      toast.error("Error deleting the blog!");
     } finally {
       setOpen(false);
       setLoading(false);
@@ -87,13 +87,13 @@ export const CellAction: React.FC<CellActionProps> = ({
 
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
-    toast.success('Billboard ID copied to clipboard.');
-  }
-  
+    toast.success("Billboard ID copied to clipboard.");
+  };
+
   return (
     <>
-      <AlertModal 
-        isOpen={open} 
+      <AlertModal
+        isOpen={open}
         onClose={() => setOpen(false)}
         onConfirm={onConfirm}
         loading={loading}
@@ -107,49 +107,43 @@ export const CellAction: React.FC<CellActionProps> = ({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem
-            onClick={() => onCopy(data.id)}
-          >
+          <DropdownMenuItem onClick={() => onCopy(data.id)}>
             <Copy className="mr-2 h-4 w-4" /> Copy Id
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => router.push('/blogs/sort/')}
-          >
+          <DropdownMenuItem onClick={() => router.push("/blogs/sort/")}>
             <Edit className="mr-2 h-4 w-4" /> Setup Blog Order
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
-              const value = Boolean(data.highlights) == true ? false : true
-              setHighlights(data.id, value)}}
-          >
-            <Copy className="mr-2 h-4 w-4" /> {Boolean(data.highlights) == true ? 'Remove as Highlight' : 'Set as Highlight'}
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem
-            onClick={() => {  
-                       
-              const value = Boolean(data.sample) == true ? false : true
-              
-              setSample(data.id, value)}}
-          >
-            <Copy className="mr-2 h-4 w-4" /> {Boolean(data.sample) == true ? 'Remove as Sample' : 'Set as Sample'}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-             
-             
+              const value = Boolean(data.highlights) == true ? false : true;
+              setHighlights(data.id, value);
             }}
           >
+            <Copy className="mr-2 h-4 w-4" />{" "}
+            {Boolean(data.highlights) == true
+              ? "Remove as Highlight"
+              : "Set as Highlight"}
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onClick={() => {
+              const value = Boolean(data.sample) == true ? false : true;
+
+              setSample(data.id, value);
+            }}
+          >
+            <Copy className="mr-2 h-4 w-4" />{" "}
+            {Boolean(data.sample) == true
+              ? "Remove as Sample"
+              : "Set as Sample"}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => {}}>
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => router.push(`/blogs/${data.id}`)}
-          >
+          <DropdownMenuItem onClick={() => router.push(`/blogs/${data.id}`)}>
             <BookImage className="mr-2 h-4 w-4" /> View Blog
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => setOpen(true)}
-          >
+          <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
