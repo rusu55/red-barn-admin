@@ -36,9 +36,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     try {
       setLoading(true);
       const blog = await axios.get(`/api/blogs/${data.id}`);
-      console.log(blog.data.photos.length);
-      for (let i = 0; i < blog.data.photos.length; i++) {
       
+            
       for(let i = 0; i < blog.data.photos.length; i++ ) {
         await edgestore.publicFiles.delete({
           url: blog.data.photos[i],
