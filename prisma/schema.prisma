@@ -68,10 +68,9 @@ model Blog {
   postDate    DateTime
   postType    String
   coverPhoto  String?
-  highlights Boolean @default(false)
-  sample Boolean @default(false)
-  orderBy Int?
-
+  highlights  Boolean  @default(false)
+  sample      Boolean  @default(false)
+  orderBy     Int?
 }
 
 model Portfolio {

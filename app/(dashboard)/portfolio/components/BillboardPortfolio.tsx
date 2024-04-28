@@ -7,9 +7,11 @@ import { Plus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 import { usePortfolioModal } from "@/hooks/use-portfolio-modal";
+import { PortfolioGrid } from "./PortfolioGrid";
 
-export const BillboardPortfolio = () => {
+export const BillboardPortfolio = ({ data }: any) => {
   const portfolioModal = usePortfolioModal();
+  console.log(data);
   return (
     <>
       <div className="flex items-center justify-between">
@@ -19,6 +21,7 @@ export const BillboardPortfolio = () => {
         </Button>
       </div>
       <Separator />
+      <PortfolioGrid data={data} />
     </>
   );
 };

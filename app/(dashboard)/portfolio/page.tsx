@@ -1,7 +1,9 @@
 import React from "react";
+import prisma from "@/prisma/prisma";
 import { UserNav } from "@/components/nav/UserNav";
 import { BillboardPortfolio } from "./components/BillboardPortfolio";
-const POrtfolioPage = () => {
+const PortfolioPage = async () => {
+  const portfolio = await prisma.portfolio.findMany({});
   return (
     <div className="container">
       <div className="pt-10 flex justify-end">
@@ -9,11 +11,11 @@ const POrtfolioPage = () => {
       </div>
       <div className="flex-col">
         <div className="flex-1 space-y-4 p-8 pt-6">
-          <BillboardPortfolio />
+          <BillboardPortfolio data={portfolio} />
         </div>
       </div>
     </div>
   );
 };
 
-export default POrtfolioPage;
+export default PortfolioPage;
