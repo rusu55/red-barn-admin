@@ -72,10 +72,11 @@ export const PortfolioModal = () => {
         .post("/api/portfolio", formatData)
         .then(() => {
           toast.success("Portfolio added !");
+          router.refresh();
           portfolioModal.onClose();
           setFile(undefined);
           form.reset();
-          router.refresh();
+          
         })
         .catch(() => {
           toast.error("Something went wrong.");

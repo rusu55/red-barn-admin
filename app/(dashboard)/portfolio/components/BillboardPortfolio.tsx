@@ -25,17 +25,20 @@ export const BillboardPortfolio = ({ data }: any) => {
 
   const handleUpdate = async () => {
     setLoading(true);
-
+  
     await axios
       .patch(`/api/portfolio`, { images })
       .then(() => {
         router.refresh();
+        
       })
       .catch((error) => {
         toast.error("Error updating Portfolio!");
       })
       .finally(() => {
+        toast.success("Portfolio Updated!");
         setLoading(false);
+        
       });
   };
   return (

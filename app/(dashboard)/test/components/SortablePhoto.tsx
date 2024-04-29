@@ -14,6 +14,7 @@ const SortablePhoto = (props: any) => {
     setNodeRef,
     transform,
     transition,
+    
   } = sortable;
 
   const style = {

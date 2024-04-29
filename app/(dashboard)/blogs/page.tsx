@@ -26,6 +26,7 @@ const BlogsPage = async () => {
   }
 
   return (
+    
     <div className="container">
       <div className="pt-10 flex justify-end">
         <UserNav label="blogs" />

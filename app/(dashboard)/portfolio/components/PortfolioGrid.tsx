@@ -42,7 +42,7 @@ export const PortfolioGrid = ({ images, setImages, setStep }: any) => {
       <SortableContext items={images} strategy={rectSortingStrategy}>
         <Grid columns={4}>
           {images.map((image: any, index: number) => (
-            <SortablePhoto key={image} url={image} index={index} />
+            <SortablePhoto key={image} url={image} index={index}/>
           ))}
         </Grid>
       </SortableContext>

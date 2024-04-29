@@ -14,7 +14,7 @@ export const POST = async (request: NextRequest) =>{
 
 export const PATCH = async (request: NextRequest) =>{
     const {images} = await request.json();
-    console.log(images)
+   
 
     await prisma.$transaction(
         images.map((image: any, index: number)=>(
