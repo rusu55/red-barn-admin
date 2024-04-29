@@ -20,11 +20,17 @@ import {
 import Grid from "../../test/components/Grid";
 import SortablePhoto from "../../test/components/SortablePhoto";
 
-export const PortfolioGrid = ({ data }: any) => {
-  const [activeId, setActiveId] = useState(null);
-  const [images, setImages] = useState<string[]>([]);
 
+
+
+export const PortfolioGrid = ({ images, setImages, setStep }: any) => {
+
+  
+  const [activeId, setActiveId] = useState(null);
+  
+ 
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+
   return (
     <DndContext
       sensors={sensors}
@@ -35,8 +41,8 @@ export const PortfolioGrid = ({ data }: any) => {
     >
       <SortableContext items={images} strategy={rectSortingStrategy}>
         <Grid columns={4}>
-          {data.map((image: any, index: number) => (
-            <SortablePhoto key={image.url} url={image.url} index={index} />
+          {images.map((image: any, index: number) => (
+            <SortablePhoto key={image} url={image} index={index} />
           ))}
         </Grid>
       </SortableContext>
@@ -44,13 +50,15 @@ export const PortfolioGrid = ({ data }: any) => {
   );
 
   function handleDragStart(event: any) {
+    
     setActiveId(event.active.id);
   }
 
   function handleDragEnd(event: any) {
     const { active, over } = event;
-
+    
     if (active.id !== over.id) {
+      setStep(true)
       setImages((items: any) => {
         const oldIndex = items.indexOf(active.id);
         const newIndex = items.indexOf(over.id);

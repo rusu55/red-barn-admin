@@ -4,6 +4,7 @@ import { CSS } from "@dnd-kit/utilities";
 
 import { Photo } from "./Photo";
 const SortablePhoto = (props: any) => {
+
   const sortable = useSortable({ id: props.url });
 
   const {

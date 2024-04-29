@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, {useState, useMemo} from "react";
 
 import Heading from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
@@ -11,17 +11,31 @@ import { PortfolioGrid } from "./PortfolioGrid";
 
 export const BillboardPortfolio = ({ data }: any) => {
   const portfolioModal = usePortfolioModal();
-  console.log(data);
+
+  const imagesArray =  data.map((image: any, index: number)=>(
+    image.url
+  ))
+
+  const [images, setImages] = useState(imagesArray);
+  const [step, setStep] = useState(false)
+
+  console.log(images)
   return (
     <>
       <div className="flex items-center justify-between">
-        <Heading title="test" description="Manage Data" />
-        <Button onClick={portfolioModal.onOpen}>
-          <Plus className="mr-2 h-4 w-4" /> Add New
-        </Button>
+        <Heading title="Portfolio" description="Manage Data" />
+        <div className="flex justify-end gap-x-4">
+          {step&& (<Button onClick={portfolioModal.onOpen}>
+            <Plus className="mr-2 h-4 w-4" /> Save Changes
+          </Button>)
+          }
+          <Button onClick={portfolioModal.onOpen}>
+            <Plus className="mr-2 h-4 w-4" /> Add New
+          </Button>
+        </div>        
       </div>
       <Separator />
-      <PortfolioGrid data={data} />
+      <PortfolioGrid images={images} setImages={setImages} setStep = {setStep} />
     </>
   );
 };
