@@ -9,8 +9,8 @@ export const POST = async (request: NextRequest) =>{
     if(body.action === 'add'){
         await prisma.portfolio.create({
             data:{
-                url: body.url,
-                tag: body.tag,
+                url: body.formatData.url,
+                tag: body.formatData.tag,
             }
         })
         return NextResponse.json('Portfolio added!', {status: 201})
