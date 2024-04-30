@@ -67,16 +67,15 @@ export const PortfolioModal = () => {
         url: res?.url,
         tag: data.tagType,
       };
-      
+
       axios
-        .post("/api/portfolio", formatData)
+        .post("/api/portfolio", { formatData, action: "add" })
         .then(() => {
           toast.success("Portfolio added !");
           router.refresh();
           portfolioModal.onClose();
           setFile(undefined);
           form.reset();
-          
         })
         .catch(() => {
           toast.error("Something went wrong.");

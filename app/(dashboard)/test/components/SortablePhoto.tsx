@@ -1,11 +1,11 @@
+"use client";
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 import { Photo } from "./Photo";
 const SortablePhoto = (props: any) => {
-
-  const sortable = useSortable({ id: props.url });
+  // const sortable = useSortable({ id: props.url });
 
   const {
     attributes,
@@ -14,8 +14,7 @@ const SortablePhoto = (props: any) => {
     setNodeRef,
     transform,
     transition,
-    
-  } = sortable;
+  } = useSortable({ id: props.url });
 
   const style = {
     transform: CSS.Transform.toString(transform),

@@ -9,7 +9,7 @@ import {
   DragOverlay,
   useSensor,
   useSensors,
-  PointerSensor
+  PointerSensor,
 } from "@dnd-kit/core";
 
 import {
@@ -26,8 +26,11 @@ const Gallery = ({ images, setImages }: any) => {
   //const [items, setItems] = useState(photos);
   const [activeId, setActiveId] = useState(null);
 
-  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
-
+  const sensors = useSensors(
+    useSensor(MouseSensor),
+    useSensor(TouchSensor),
+    useSensor(PointerSensor)
+  );
 
   return (
     <DndContext

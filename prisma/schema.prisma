@@ -74,8 +74,8 @@ model Blog {
 }
 
 model Portfolio {
-  id  String   @id @default(auto()) @map("_id") @db.ObjectId
-  url String
-  tag String[]
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  url     String   @unique
+  tag     String[]
   orderBy Int?
 }

@@ -1,15 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/prisma";
+import { request } from "http";
 
 export const POST = async (request: NextRequest) =>{
     const body = await request.json();
-    await prisma.portfolio.create({
-        data:{
-            url: body.url,
-            tag: body.tag,
-        }
-    })
-    return NextResponse.json('Portfolio added!', {status: 201})
+    console.log(body)
+
+    if(body.action === 'add'){
+        await prisma.portfolio.create({
+            data:{
+                url: body.url,
+                tag: body.tag,
+            }
+        })
+        return NextResponse.json('Portfolio added!', {status: 201})
+    }   
+
+    if(body.action === 'delete'){
+        await prisma.portfolio.delete({
+            where: {
+                url: body.url,
+              },
+        })
+        return NextResponse.json('POrtfolio deleted!', {status: 201})
+    }
 }
 
 export const PATCH = async (request: NextRequest) =>{
@@ -26,3 +40,4 @@ export const PATCH = async (request: NextRequest) =>{
     )
     return NextResponse.json('Portofolio Updated!', {status:201});
 }
+
