@@ -3,8 +3,7 @@ import prisma from "@/prisma/prisma";
 import { request } from "http";
 
 export const POST = async (request: NextRequest) =>{
-    const body = await request.json();
-    console.log(body)
+    const body = await request.json();    
 
     if(body.action === 'add'){
         await prisma.portfolio.create({
@@ -19,7 +18,7 @@ export const POST = async (request: NextRequest) =>{
     if(body.action === 'delete'){
         await prisma.portfolio.delete({
             where: {
-                url: body.url,
+                url: body.imageUrl,
               },
         })
         return NextResponse.json('POrtfolio deleted!', {status: 201})

@@ -19,6 +19,7 @@ import {
 } from "@dnd-kit/sortable";
 
 import { useEdgeStore } from "@/providers/EdgeStoreProvider";
+import { AlertModal } from "@/components/modals/AlertModal";
 
 import Grid from "../../test/components/Grid";
 import SortablePhoto from "../../test/components/SortablePhoto";
@@ -27,6 +28,9 @@ import { toast } from "react-hot-toast";
 export const PortfolioGrid = ({ images, setImages, setStep }: any) => {
   const { edgestore } = useEdgeStore();
   const [activeId, setActiveId] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -36,22 +40,35 @@ export const PortfolioGrid = ({ images, setImages, setStep }: any) => {
       activationConstraint: { distance: 5 },
     })
   );
-  const handleClick = async (url: any) => {
+  const handleClick = async () => {
+   console.log(imageUrl)
     await axios
-      .post("/api/portfolio", { url, action: "delete" })
+      .post("/api/portfolio", { imageUrl, action: "delete" })
       .then(() => {
         edgestore.publicFiles.delete({
-          url: url,
+          url: imageUrl,
         });
       })
       .catch((error: any) => {
         alert(error);
       })
       .finally(() => {
+        setOpen(false);
+        setLoading(false);
         toast.success("Blog deleted!");
-      });
+      });   
+   
   };
+
+  
   return (
+    <>
+     <AlertModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onConfirm={handleClick}
+        loading={loading}
+      />
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
@@ -66,12 +83,14 @@ export const PortfolioGrid = ({ images, setImages, setStep }: any) => {
               key={image}
               url={image}
               index={index}
-              handleClick={handleClick}
+              setImageUrl={setImageUrl}
+              setOpen={setOpen}
             />
           ))}
         </Grid>
       </SortableContext>
     </DndContext>
+    </>
   );
 
   function handleDragStart(event: any) {

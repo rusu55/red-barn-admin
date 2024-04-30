@@ -13,26 +13,19 @@ export const columns =  [
       {
         accessorKey: 'blogTitle',
         cell: (info: any) => info.getValue(),
-        size:200
+        size:300
       },
       {
         accessorKey: 'blogDescription',
         header: 'Blog Description',
-        size:500
+        size:600
       },
       
       {
         accessorKey: 'blogType',
         header: 'Photography',
       },
-      {
-        accessorKey: 'highlights',
-        header: 'Highlights',
-      },
-      {
-        accessorKey: 'sample',
-        header: 'Photo Sample',
-      },
+      
     ]
    
   

@@ -4,6 +4,7 @@ import prisma from "@/prisma/prisma";
 import { BillboardBlogs } from "./components/BillboardBlogs";
 import { format } from "date-fns";
 import { UserNav } from "@/components/nav/UserNav";
+import _ from 'lodash';
 export const dynamic = 'force-dynamic'
 
 const BlogsPage = async () => {
@@ -16,7 +17,7 @@ const BlogsPage = async () => {
     formatedData = blogs.map((blog) => ({
       id: blog.id.toString(),
       blogTitle: blog.title,
-      blogDescription: blog.description,
+      blogDescription: _.truncate(blog.description, {length: 100}),
       blogType: blog.postType,
       photos: blog.photos,
       postDate: format(blog.postDate, "MM/dd/yyyy"),
