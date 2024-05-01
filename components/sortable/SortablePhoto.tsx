@@ -4,9 +4,8 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 import { Photo } from "./Photo";
-
-export const SortablePhoto = (props: any) => {
-  const sortable = useSortable({ id: props.url });
+const SortablePhoto = (props: any) => {
+  // const sortable = useSortable({ id: props.url });
 
   const {
     attributes,
@@ -15,7 +14,7 @@ export const SortablePhoto = (props: any) => {
     setNodeRef,
     transform,
     transition,
-  } = sortable;
+  } = useSortable({ id: props.url });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -32,3 +31,5 @@ export const SortablePhoto = (props: any) => {
     />
   );
 };
+
+export default SortablePhoto;

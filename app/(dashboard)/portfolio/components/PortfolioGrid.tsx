@@ -21,8 +21,8 @@ import {
 import { useEdgeStore } from "@/providers/EdgeStoreProvider";
 import { AlertModal } from "@/components/modals/AlertModal";
 
-import Grid from "../../test/components/Grid";
-import SortablePhoto from "../../test/components/SortablePhoto";
+import Grid from "@/components/sortable/Grid";
+import SortablePhoto from "@/components/sortable/SortablePhoto";
 import { toast } from "react-hot-toast";
 
 export const PortfolioGrid = ({ images, setImages, setStep }: any) => {

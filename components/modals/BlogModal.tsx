@@ -51,7 +51,7 @@ import {
 
 import useBlogModal from "@/hooks/use-blog-modal";
 import { useEdgeStore } from "@/providers/EdgeStoreProvider";
-import Gallery from "@/app/(dashboard)/test/components/Gallery";
+import Gallery from "@/components/sortable/Gallery";
 
 import MultiImagesDrop from "../FilesUpload/MultiImagesDrop";
 
