@@ -136,7 +136,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               ? "Remove as Sample"
               : "Set as Sample"}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => {}}>
+          <DropdownMenuItem onClick={() => router.push(`/blogs/update/${data.id}`)}>
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push(`/blogs/${data.id}`)}>

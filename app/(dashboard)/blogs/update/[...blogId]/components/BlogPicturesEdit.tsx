@@ -1,9 +1,7 @@
 import React from 'react'
 
-const BlogPicturesEdit = () => {
+export const BlogPicturesEdit = () => {
   return (
     <div>BlogPicturesEdit</div>
   )
 }
-
-export default BlogPicturesEdit
