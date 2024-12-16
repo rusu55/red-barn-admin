@@ -7,6 +7,7 @@ import { EdgeStoreProvider } from "@/providers/EdgeStoreProvider";
 
 import { BlogModal } from "@/components/modals/BlogModal";
 import { PortfolioModal } from "@/components/modals/PortfolioModal";
+import { VenueModal } from "@/components/modals/VenueModal";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,6 +27,7 @@ export default function RootLayout({
         <EdgeStoreProvider>
           <BlogModal />
           <PortfolioModal />
+          <VenueModal />
           <ToasterProvider />
           {children}
         </EdgeStoreProvider>

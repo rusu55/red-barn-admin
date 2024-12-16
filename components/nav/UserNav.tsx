@@ -62,10 +62,24 @@ export function UserNav({ label }: any) {
               Portfolio
             </span>
           </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push("/venues")}>
+            <span
+              className={clsx(
+                "w-full",
+                label === "venues"
+                  ? "text-red-950 font-bold bg-slate-200/50 p-2 rounded-sm"
+                  : "text-black"
+              )}
+            >
+              Venues
+            </span>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={() => signOut({ callbackUrl: "http://admin.redbarnweddingstudio.xyz"})}
+          onClick={() =>
+            signOut({ callbackUrl: "http://admin.redbarnweddingstudio.xyz" })
+          }
         >
           Log out
         </DropdownMenuItem>
