@@ -9,22 +9,20 @@ import { toast } from "react-hot-toast";
 
 import { Modal } from "./Modal";
 
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "../ui/form";
 
 import {
-    Form,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormControl,
-    FormMessage,
-  } from "../ui/form";
-
-
-  import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-  } from "@/components/ui/popover";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 import { Heading } from "../Heading";
 import { Input } from "@/components/ui/input";
@@ -38,7 +36,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
@@ -46,8 +44,6 @@ import {
   MultiImageDropzone,
   type FileState,
 } from "@/components/FilesUpload/MultiImages";
-
-
 
 import useBlogModal from "@/hooks/use-blog-modal";
 import { useEdgeStore } from "@/providers/EdgeStoreProvider";
@@ -72,8 +68,8 @@ const formSchema = z.object({
   postDate: z.date(),
   description: z.string().optional(),
   postType: z.string().nonempty("Field is required"),
+  venue: z.string().optional(),
 });
-
 
 export const BlogModal = () => {
   let bodyContent;
@@ -117,13 +113,14 @@ export const BlogModal = () => {
     if (step !== STEPS.ORGANIZE) {
       return onNext();
     }
-    
+
     const formatedData = {
       title: data.title,
       description: data.description,
       photos: images,
       postType: data.postType,
       postDate: data.postDate,
+      venue: data.venue,
       coverPhoto: "",
       highlights: Boolean(false),
     };
@@ -145,7 +142,6 @@ export const BlogModal = () => {
       .finally(() => {
         setIsLoading(false);
       });
-      
   };
 
   const actionLabel = useMemo(() => {
@@ -164,136 +160,171 @@ export const BlogModal = () => {
     return "Back";
   }, [step]);
 
-  
-
   //---------------- STEP INFO
   if (step === STEPS.INFO) {
     bodyContent = (
       <div className="flex flex-col gap-8">
-      <Heading title="Blog Info" subtitle="Short and sweet works best!" />
-      <div className="space-y-4 py-2 pb-4">
-        <Form {...form}>
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Blog Title</FormLabel>
-                <FormControl>
-                  <Input placeholder="Blog Title" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-  
-          <FormField
-            control={form.control}
-            name="postDate"
-            render={({ field }) => (
-              <FormItem className="flex flex-col mt-3">
-                <FormLabel>Posting Date: </FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-[240px] pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date("1900-01-01")
-                      }
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-  
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="postType"
-            render={({field}) => (
-              <FormItem className="mt-3">
-                <div className="mb-4">
-                  <FormLabel className="text-base">
-                    Photography Type
-                  </FormLabel>
-                </div>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+        <Heading title="Blog Info" subtitle="Short and sweet works best!" />
+        <div className="space-y-4 py-2 pb-4">
+          <Form {...form}>
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Blog Title</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Photography Type" />
-                    </SelectTrigger>
+                    <Input placeholder="Blog Title" {...field} />
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value="wedding">Wedding Photography</SelectItem>
-                    <SelectItem value="engagement">Engagement Photography</SelectItem>                    
-                  </SelectContent>
-                </Select>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem className="mt-3">
-                <FormLabel>Description:</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Type your message here."
-                    id="message"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </Form>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="postDate"
+              render={({ field }) => (
+                <FormItem className="flex flex-col mt-3">
+                  <FormLabel>Posting Date: </FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-[240px] pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="postType"
+              render={({ field }) => (
+                <FormItem className="mt-3">
+                  <div className="mb-4">
+                    <FormLabel className="text-base">
+                      Photography Type
+                    </FormLabel>
+                  </div>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Photography Type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="wedding">
+                        Wedding Photography
+                      </SelectItem>
+                      <SelectItem value="engagement">
+                        Engagement Photography
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="venue"
+              render={({ field }) => (
+                <FormItem className="mt-3">
+                  <div className="mb-4">
+                    <FormLabel className="text-base">Venue</FormLabel>
+                  </div>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Venue" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {blogModal.venues.map((venue: any, index: any) => {
+                        return (
+                          <SelectItem value={venue.id} key={index}>
+                            {venue.name}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem className="mt-3">
+                  <FormLabel>Description:</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Type your message here."
+                      id="message"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </Form>
+        </div>
       </div>
-    </div>
     );
   }
 
   //---------------- STEP UPLOAD
   if (step === STEPS.UPLOAD) {
-    
+    /** 
     bodyContent = (
-      <MultiImagesDrop 
-          fileStates={fileStates} 
-          setFileStates={setFileStates}
-          edgestore ={edgestore}
-          images={images}
-          setImages={setImages}
-          />     
-     );
-     
+      <MultiImagesDrop
+        fileStates={fileStates}
+        setFileStates={setFileStates}
+        edgestore={edgestore}
+        images={images}
+        setImages={setImages}
+      />
+    );
+    */
   }
 
   //--------------- STEP ORGANIZE
   if (step === STEPS.ORGANIZE) {
-     bodyContent = <Gallery images={images} setImages={setImages} />; 
+    // bodyContent = <Gallery images={images} setImages={setImages} />;
   }
 
   return (

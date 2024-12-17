@@ -24,22 +24,18 @@ interface CellActionProps {
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
-    console.log(data)
   const router = useRouter();
   const params = useParams();
   const { edgestore } = useEdgeStore();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  
-    
 
   const onConfirm = async () => {
     try {
       setLoading(true);
       const blog = await axios.get(`/api/blogs/${data.id}`);
-      
-            
-      for(let i = 0; i < blog.data.photos.length; i++ ) {
+
+      for (let i = 0; i < blog.data.photos.length; i++) {
         await edgestore.publicFiles.delete({
           url: blog.data.photos[i],
         });
@@ -55,7 +51,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     }
   };
 
-   /**
+  /**
   const setHighlights = async (id: string, value: boolean) =>{    
     
       setLoading(true);
@@ -113,9 +109,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push("/blogs/sort/")}>
             <Edit className="mr-2 h-4 w-4" /> Setup Blog Order
-          </DropdownMenuItem>        
-        
-          <DropdownMenuItem onClick={() => router.push(`/blogs/update/${data.id}`)}>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onClick={() => router.push(`/blogs/update/${data.id}`)}
+          >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push(`/blogs/${data.id}`)}>

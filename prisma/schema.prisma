@@ -86,7 +86,7 @@ model Venue {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   description String
   name        String
-  hero String?
+  hero        String?
   createAt    DateTime @default(now())
-  blogs       Blog[] @relation("VenueField")
+  blogs       Blog[]   @relation("VenueField")
 }

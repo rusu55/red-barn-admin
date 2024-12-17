@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Heading from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
@@ -12,13 +12,15 @@ import { columns } from "./columns";
 
 import useBlogModal from "@/hooks/use-blog-modal";
 
-export const BillboardBlogs = ({ data }: any) => {
+export const BillboardBlogs = ({ data, venues }: any) => {
   const params = useParams();
   const router = useRouter();
   const blogModal = useBlogModal();
-  
- 
-  
+
+  useEffect(() => {
+    blogModal.setVenues(venues);
+  }, [venues]);
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -28,7 +30,7 @@ export const BillboardBlogs = ({ data }: any) => {
         </Button>
       </div>
       <Separator />
-      <DataTable searchKey="blogTitle" columns={columns} data={data} />  
+      <DataTable searchKey="blogTitle" columns={columns} data={data} />
     </>
   );
 };

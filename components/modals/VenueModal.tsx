@@ -18,6 +18,9 @@ import {
 } from "../ui/form";
 import { Input } from "@/components/ui/input";
 
+import { SingleImageDropzone } from "@/components/FilesUpload/SingleImage";
+import { useEdgeStore } from "@/providers/EdgeStoreProvider";
+
 import "easymde/dist/easymde.min.css";
 import SimpleMDE from "react-simplemde-editor";
 import useVenueModal from "@/hooks/use-venue-modal";
@@ -29,8 +32,12 @@ const formSchema = z.object({
 
 export const VenueModal = () => {
   let bodyContent;
+
   const [isLoading, setIsLoading] = useState(false);
+  const [file, setFile] = useState<File>();
+
   const venueModal = useVenueModal();
+  const { edgestore } = useEdgeStore();
   const router = useRouter();
 
   const form = useForm<FieldValues>({
@@ -41,18 +48,44 @@ export const VenueModal = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    let res: any;
     setIsLoading(true);
+
+    if (file) {
+      res = await edgestore.publicFiles.upload({
+        file,
+        onProgressChange: (progress) => {
+          console.log(progress);
+        },
+      });
+      // setFileURL(res.url);
+    }
+
+    const formatedData = {
+      hero: res?.url,
+      name: data.name,
+      description: data.description,
+    };
+
     axios
-      .post("/api/venues", data)
+      .post("/api/venues", formatedData)
       .then(() => {
         toast.success("Venue Added!");
         router.refresh();
         form.reset();
         venueModal.onClose();
       })
-      .catch(() => {
+      .catch(async () => {
+        await edgestore.publicFiles.delete({
+          url: res.url,
+        });
+
         toast.error("Venue was not added!!!");
+        setFile(undefined);
+        router.refresh();
+        form.reset();
+        venueModal.onClose();
       })
       .finally(() => {
         setIsLoading(false);
@@ -62,6 +95,16 @@ export const VenueModal = () => {
   bodyContent = (
     <div className="flex flex-col gap-8">
       <Heading title="Venue Info Form" subtitle="Short and sweet works best!" />
+      <div>
+        <SingleImageDropzone
+          width={200}
+          height={200}
+          value={file}
+          onChange={(file) => {
+            setFile(file);
+          }}
+        />
+      </div>
       <div className="space-y-4 py-2 pb-4">
         <Form {...form}>
           <FormField

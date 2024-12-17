@@ -12,6 +12,7 @@ export const POST = async (request: NextRequest) => {
             title: body.title,
             postType: body.postType,
             description: body.description,
+            venue: body?.venue.toString(),
             photos: body.photos,
             postDate: body.postDate,
             coverPhoto: body?.coverPhoto,

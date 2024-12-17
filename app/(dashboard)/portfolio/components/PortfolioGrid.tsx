@@ -29,7 +29,7 @@ export const PortfolioGrid = ({ images, setImages, setStep }: any) => {
   const { edgestore } = useEdgeStore();
   const [activeId, setActiveId] = useState(null);
   const [open, setOpen] = useState(false);
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
   const sensors = useSensors(
@@ -40,8 +40,8 @@ export const PortfolioGrid = ({ images, setImages, setStep }: any) => {
       activationConstraint: { distance: 5 },
     })
   );
+
   const handleClick = async () => {
-   console.log(imageUrl)
     await axios
       .post("/api/portfolio", { imageUrl, action: "delete" })
       .then(() => {
@@ -56,40 +56,38 @@ export const PortfolioGrid = ({ images, setImages, setStep }: any) => {
         setOpen(false);
         setLoading(false);
         toast.success("Blog deleted!");
-      });   
-   
+      });
   };
 
-  
   return (
     <>
-     <AlertModal
+      <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
         onConfirm={handleClick}
         loading={loading}
       />
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-      onDragCancel={handleDragCancel}
-    >
-      <SortableContext items={images} strategy={rectSortingStrategy}>
-        <Grid columns={4}>
-          {images.map((image: any, index: number) => (
-            <SortablePhoto
-              key={image}
-              url={image}
-              index={index}
-              setImageUrl={setImageUrl}
-              setOpen={setOpen}
-            />
-          ))}
-        </Grid>
-      </SortableContext>
-    </DndContext>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragCancel={handleDragCancel}
+      >
+        <SortableContext items={images} strategy={rectSortingStrategy}>
+          <Grid columns={4}>
+            {images.map((image: any, index: number) => (
+              <SortablePhoto
+                key={image}
+                url={image}
+                index={index}
+                setImageUrl={setImageUrl}
+                setOpen={setOpen}
+              />
+            ))}
+          </Grid>
+        </SortableContext>
+      </DndContext>
     </>
   );
 

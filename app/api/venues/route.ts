@@ -11,6 +11,7 @@ export const POST = async (request: NextRequest) => {
     const schema = z.object({
         name: z.string().nonempty("Name is required"),
         description: z.string().nonempty("Description is required"),
+        hero: z.string().optional(),
       });
 
       const response = schema.safeParse(body);
@@ -27,13 +28,14 @@ export const POST = async (request: NextRequest) => {
         }
     });
     if(existingVenue){
-        return NextResponse.json('User with this email already registerd!', {status: 401})
+        return NextResponse.json('Venue already exist!', {status: 401})
     }
 
     const newVenue = await prisma.venue.create({
         data:{
             name: response.data.name,
             description: response.data.description,
+            hero: response.data.hero,
         }
     })
     
