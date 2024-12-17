@@ -7,7 +7,20 @@ import { BoardVenues } from "./components/BoardVenues";
 export const dynamic = "force-dynamic";
 
 const VenuesPage = async () => {
-  const venues = await prisma.venue.findMany({});
+  let formatedData;
+  const venues = await prisma.venue.findMany({
+    
+  });
+
+  if(venues){
+    formatedData = venues.map((venue) => ({
+      id: venue.id.toString(),
+      name: venue.name,
+      description: _.truncate(venue.description, {length: 60}),
+      hero: venue.hero,
+      createdDate: format(venue.createAt, "MM/dd/yyyy"),
+    }));
+  }
 
   return (
     <div className="container">
@@ -16,7 +29,7 @@ const VenuesPage = async () => {
       </div>
       <div className="flex-col">
         <div className="flex-1 space-y-4 p-8 pt-6">
-          <BoardVenues data={venues} />
+          <BoardVenues data={formatedData} />
         </div>
       </div>
     </div>

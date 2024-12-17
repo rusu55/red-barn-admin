@@ -71,8 +71,8 @@ model Blog {
   highlights  Boolean  @default(false)
   sample      Boolean  @default(false)
   orderBy     Int?
-  venueId     String   @db.ObjectId
-  venue       Venue?   @relation(fields: [venueId], references: [id])
+  venueId     String?  @db.ObjectId
+  venue       Venue?   @relation("VenueField", fields: [venueId], references: [id])
 }
 
 model Portfolio {
@@ -86,6 +86,7 @@ model Venue {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   description String
   name        String
+  hero String?
   createAt    DateTime @default(now())
-  blogs       Blog[]
+  blogs       Blog[] @relation("VenueField")
 }

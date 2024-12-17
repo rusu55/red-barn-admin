@@ -49,11 +49,11 @@ export function DataTable({ columns, data, searchKey }: any) {
       <div className="flex items-center py-4">
        
       </div>
-      <div className="rounded-md border">
+      <div className="rounded-lg border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className="bg-gray-200 text-gray-700">
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>
@@ -75,6 +75,7 @@ export function DataTable({ columns, data, searchKey }: any) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="odd:bg-white even:bg-gray-100"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -87,7 +88,7 @@ export function DataTable({ columns, data, searchKey }: any) {
                 </TableRow>
               ))
             ) : (
-              <TableRow>
+              <TableRow className="odd:bg-white even:bg-gray-200">
                 <TableCell
                   colSpan={columns.length}
                   className="h-24 text-center"

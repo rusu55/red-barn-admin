@@ -17,9 +17,9 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "@/components/ui/input";
-import SimpleMDE from "react-simplemde-editor";
-import "easymde/dist/easymde.min.css";
 
+import "easymde/dist/easymde.min.css";
+import SimpleMDE from "react-simplemde-editor";
 import useVenueModal from "@/hooks/use-venue-modal";
 
 const formSchema = z.object({
@@ -28,6 +28,7 @@ const formSchema = z.object({
 });
 
 export const VenueModal = () => {
+  let bodyContent;
   const [isLoading, setIsLoading] = useState(false);
   const venueModal = useVenueModal();
   const router = useRouter();
@@ -58,7 +59,7 @@ export const VenueModal = () => {
       });
   };
 
-  const bodyContent = (
+  bodyContent = (
     <div className="flex flex-col gap-8">
       <Heading title="Venue Info Form" subtitle="Short and sweet works best!" />
       <div className="space-y-4 py-2 pb-4">
