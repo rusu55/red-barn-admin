@@ -21,8 +21,10 @@ import { Input } from "@/components/ui/input";
 import { SingleImageDropzone } from "@/components/FilesUpload/SingleImage";
 import { useEdgeStore } from "@/providers/EdgeStoreProvider";
 
-import "easymde/dist/easymde.min.css";
-import SimpleMDE from "react-simplemde-editor";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+//import "easymde/dist/easymde.min.css";
+//import SimpleMDE from "react-simplemde-editor";
 import useVenueModal from "@/hooks/use-venue-modal";
 
 const formSchema = z.object({
@@ -127,7 +129,8 @@ export const VenueModal = () => {
               <FormItem className="mt-3">
                 <FormLabel>Description:</FormLabel>
                 <FormControl>
-                  <SimpleMDE {...field} />
+                  <ReactQuill theme="snow" {...field} />
+                  
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -72,7 +72,7 @@ model Blog {
   sample      Boolean  @default(false)
   orderBy     Int?
   venueId     String?  @db.ObjectId
-  venue       Venue?   @relation("VenueField", fields: [venueId], references: [id])
+  venue       Venue?   @relation("VenueField", fields: [venueId], references: [id], onDelete: Cascade)
 }
 
 model Portfolio {
